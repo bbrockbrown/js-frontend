@@ -1,8 +1,8 @@
 # Frontend Template
 
-_2025 Discover Program Project Templates_
+_2026 Discover Program Project Templates_
 
-This template was created by the DISC tech leads of 2024-2025:
+This template was created by the DISC tech leads of 2025-2026:
 
 - [Brock Brown](https://www.linkedin.com/in/bbrockbrown/)
 - [Vihaan Shah](https://www.linkedin.com/in/shah-vihaan/)
@@ -25,24 +25,41 @@ npm i
 
 ### 2. Set up formatting with Prettier and ESLint
 
-If you are contributing to this repo, you must make sure ALL your code is
-formatted according to our `eslint.config.mjs` and `.prettierrc.json` configs.
-The best way to make sure you are always sticking to our guidelines is by having
-prettier & eslint automatically format your code when you save.
+You must make sure ALL your code is
+formatted according to our `eslint.config.js` and `.prettierrc` configs. The
+best way to make sure you are always sticking to our guidelines is by having
+Prettier & ESLint automatically format your code when you save.
 
-Here's how to set that up:
+#### VSCode (recommended)
 
-- If you are using VSCode, do the following:
-  1. Install the
-     [Prettier ESLint VSCode extension](https://marketplace.visualstudio.com/items?itemName=rvest.vs-code-prettier-eslint)
-  2. Install the
-     [ESLint VSCode extension](https://marketplace.visualstudio.com/items?itemName=dbaeumer.vscode-eslint)
-  3. **Restart VSCode completely (quit app and reopen).**
+When you open this project in VSCode, it will automatically prompt you to
+install the recommended extensions from `.vscode/extensions.json`. Click
+**Install** on the notification, or install them manually:
 
-- If you are NOT using VSCode, either use VSCode or you'll have to figure out
-  how to format-on-save on your own.
+1. [Prettier ESLint](https://marketplace.visualstudio.com/items?itemName=rvest.vs-code-prettier-eslint)
+   (`rvest.vs-code-prettier-eslint`) — formats your code using both Prettier
+   and ESLint rules on every save
+2. [ESLint](https://marketplace.visualstudio.com/items?itemName=dbaeumer.vscode-eslint)
+   (`dbaeumer.vscode-eslint`) — shows lint errors and warnings inline as you
+   type
 
-Find more details about our linting config [here](#code-formatting-rules)
+Once both are installed, **restart VSCode completely (quit and reopen)**. From
+that point on, every file save will automatically format and lint your code.
+Format-on-save is configured in `.vscode/settings.json` — do not edit this
+file.
+
+To manually format all files at once:
+
+```bash
+npx prettier . --write
+```
+
+#### Other editors
+
+You are on your own for format-on-save setup. The Prettier config is in
+`.prettierrc` and the ESLint config is in `eslint.config.js`.
+
+Find more details about our linting rules [here](#code-formatting-rules)
 
 ### 3. Run the app in development mode
 
@@ -51,13 +68,6 @@ npm run dev
 ```
 
 ## Additional scripts
-
-Launch the test runner in interactive watch mode:
-
-```
-npm test
-```
-
 Create an optimized production build:
 
 ```
@@ -98,10 +108,11 @@ Everything else: **DO NOT TOUCH!!!**
 ├── .vscode // project-specific settings for VSCode (eg. format on save)
 ├── build // copy of the project optimized for production
 ├── node_modules // external libraries and dependencies
-├── eslint.config.mjs // linting config
+├── eslint.config.js // linting config
 ├── jsconfig.json // JS compiling config
 ├── package-lock.json // detailed description of the entire dependency tree
-└── package.json // project dependencies
+├── package.json // project dependencies
+└── vite.config.js // Vite build and test config
 ```
 
 ## Code formatting rules

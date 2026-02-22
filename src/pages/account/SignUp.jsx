@@ -7,6 +7,7 @@ import { Form, FormTitle } from '@/common/components/form/Form';
 import { Input } from '@/common/components/form/Input';
 import SubmitButton from '@/common/components/form/SubmitButton';
 import { useUser } from '@/common/contexts/UserContext';
+import { RedSpan } from '@/common/components/form/styles';
 
 import { StyledPage } from './styles';
 
@@ -64,7 +65,7 @@ export default function SignUp() {
 
     try {
       const response = await fetch(
-        `${import.meta.env.REACT_APP_BACKEND_URL}/auth/signup`,
+        `${import.meta.env.VITE_BACKEND_URL}/auth/signup`,
         {
           method: 'POST',
           headers: {
@@ -85,9 +86,6 @@ export default function SignUp() {
       if (!response.ok) {
         throw new Error(data.error || 'Failed to create account');
       }
-      alert(
-        'Account created successfully! Please check your email to verify your account.'
-      );
       navigate('/login', {
         state: {
           message:
@@ -106,7 +104,7 @@ export default function SignUp() {
     <StyledPage>
       <Form onSubmit={handleSubmit}>
         <FormTitle>Create an account</FormTitle>
-        {error && <div className='text-red-500 mb-4'>{error}</div>}
+        {error && <RedSpan>{error}</RedSpan>}
         <Input.Text
           title='First name'
           placeholder='John'

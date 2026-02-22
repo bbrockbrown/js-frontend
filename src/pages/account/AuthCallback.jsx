@@ -1,9 +1,10 @@
 import React, { useEffect } from 'react';
 
+import { getRedirectResult } from 'firebase/auth';
 import { useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
 
-import { useUser } from '@/common/contexts/UserContext';
+import { auth } from '@/firebase-config';
 
 const Container = styled.div`
   display: flex;
@@ -14,36 +15,33 @@ const Container = styled.div`
 
 const LoadingText = styled.p`
   font-size: 1rem;
-  color: ${(props) => props.theme.colors?.text || '#000'};
 `;
 
 export default function AuthCallback() {
   const navigate = useNavigate();
-  const { checkAuth } = useUser();
 
   useEffect(() => {
-    const handleCallback = async () => {
+    const handleRedirectResult = async () => {
       try {
-        console.log('AuthCallback mounted');
-        const hash = window.location.hash.substring(1);
-        const params = new URLSearchParams(hash);
-        const access_token = params.get('access_token');
+        // Handles the result of a signInWithRedirect() call (e.g. on mobile).
+        // If the user signed in via popup (desktop), result will be null and we
+        // redirect home immediately.
+        const result = await getRedirectResult(auth);
 
-        console.log('Token status:', access_token ? 'present' : 'missing');
-
-        if (!access_token) {
-          throw new Error('No access token received');
+        if (!result) {
+          navigate('/', { replace: true });
+          return;
         }
 
+        const idToken = await result.user.getIdToken();
+
         const response = await fetch(
-          `${import.meta.env.REACT_APP_BACKEND_URL}/auth/callback`,
+          `${import.meta.env.VITE_BACKEND_URL}/auth/token`,
           {
             method: 'POST',
             credentials: 'include',
-            headers: {
-              'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({ access_token }),
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ idToken }),
           }
         );
 
@@ -52,16 +50,7 @@ export default function AuthCallback() {
           throw new Error(error.error || 'Authentication failed');
         }
 
-        localStorage.setItem('authToken', access_token);
-
-        await new Promise((resolve) => setTimeout(resolve, 100));
-
-        const authSuccess = await checkAuth();
-        if (authSuccess) {
-          navigate('/', { replace: true });
-        } else {
-          throw new Error('Authentication verification failed');
-        }
+        navigate('/', { replace: true });
       } catch (error) {
         console.error('Auth callback error:', error);
         navigate('/login', {
@@ -71,8 +60,8 @@ export default function AuthCallback() {
       }
     };
 
-    handleCallback();
-  }, [navigate, checkAuth]);
+    handleRedirectResult();
+  }, [navigate]);
 
   return (
     <Container>

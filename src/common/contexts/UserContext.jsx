@@ -2,36 +2,33 @@ import React, { useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
 
 import { auth, googleProvider } from '@/firebase-config';
-import { 
-  signInWithPopup, 
-  signOut, 
-  sendPasswordResetEmail, 
-  updatePassword, 
+import {
   onAuthStateChanged,
+  sendPasswordResetEmail,
   signInWithEmailAndPassword,
-} from "firebase/auth";
+  signInWithPopup,
+  signOut,
+} from 'firebase/auth';
 
 export const UserContext = React.createContext({
   user: null,
-  setUser: () => {}, 
   isLoading: false,
   logout: () => {},
   login: () => {},
   googleAuth: () => {},
   requestPasswordReset: () => {},
-  updateUserPassword: () => {},
 });
 
 UserProvider.propTypes = {
   children: PropTypes.node.isRequired,
 };
 
+const buildUrl = (endpoint) =>
+  `${import.meta.env.VITE_BACKEND_URL.replace(/\/$/, '')}${endpoint}`;
+
 export function UserProvider({ children }) {
   const [user, setUser] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
-
-  const buildUrl = (endpoint) =>
-    `${import.meta.env.VITE_BACKEND_URL.replace(/\/$/, '')}${endpoint}`;
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, async (firebaseUser) => {
@@ -39,21 +36,17 @@ export function UserProvider({ children }) {
         try {
           const idToken = await firebaseUser.getIdToken();
           const response = await fetch(buildUrl('/auth/profile'), {
-            headers: {
-              Authorization: `Bearer ${idToken}`,
-            },
+            headers: { Authorization: `Bearer ${idToken}` },
           });
 
           if (response.ok) {
             const backendUserData = await response.json();
             setUser({ ...firebaseUser, ...backendUserData });
           } else {
-            console.warn("Could not fetch backend profile data. Using Firebase user data only.");
-            setUser(firebaseUser); 
+            setUser(firebaseUser);
           }
-        } catch (error) {
-          console.error("Error fetching backend profile:", error);
-          setUser(firebaseUser); // Fallback to just Firebase user if backend call fails
+        } catch {
+          setUser(firebaseUser);
         }
       } else {
         setUser(null);
@@ -61,82 +54,64 @@ export function UserProvider({ children }) {
       setIsLoading(false);
     });
 
-    return () => unsubscribe(); // Clean up the subscription
-  }, []); 
+    return () => unsubscribe();
+  }, []);
 
-// Firebase Email/Password Login
   const login = async (email, password) => {
     try {
       await signInWithEmailAndPassword(auth, email, password);
       return true;
     } catch (error) {
-      console.error('Firebase Login error:', error);
+      console.error('Login error:', error);
       throw error;
     }
   };
 
-  // Firebase Logout
   const logout = async () => {
     try {
       await signOut(auth);
       return true;
     } catch (error) {
-      console.error('Firebase Logout error:', error);
+      console.error('Logout error:', error);
       throw error;
     }
   };
 
-  // Firebase Google Sign-In
+  // Signs in with Google popup and syncs the user to the MySQL backend.
   const googleAuth = async () => {
     try {
-      await signInWithPopup(auth, googleProvider);
+      const result = await signInWithPopup(auth, googleProvider);
+      const idToken = await result.user.getIdToken();
+
+      await fetch(buildUrl('/auth/token'), {
+        method: 'POST',
+        credentials: 'include',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ idToken }),
+      });
     } catch (error) {
-      console.error('Firebase Google auth error:', error);
+      console.error('Google auth error:', error);
       throw new Error('Failed to complete Google authentication');
     }
   };
 
-  // Firebase Password Reset
   const requestPasswordReset = async (email) => {
     try {
       await sendPasswordResetEmail(auth, email);
       return true;
     } catch (error) {
-      console.error('Firebase Password reset request error:', error);
-      throw error;
-    }
-  };
-
-  // Firebase Update Password
-  const updateUserPassword = async (newPassword) => {
-    try {
-      const currentUser = auth.currentUser;
-      if (currentUser) {
-        // NOTE: For sensitive operations like password update, Firebase might
-        // require recent re-authentication. If an error like 'auth/requires-recent-login'
-        // occurs, you'll need to prompt the user to re-authenticate first.
-        // You would use `reauthenticateWithCredential(currentUser, credential)`
-        // where `credential` is obtained from a recent sign-in (e.g., EmailAuthProvider.credential).
-        await updatePassword(currentUser, newPassword);
-        return true;
-      } else {
-        throw new Error('No user is currently signed in to update password.');
-      }
-    } catch (error) {
-      console.error('Firebase Password update error:', error);
+      console.error('Password reset request error:', error);
       throw error;
     }
   };
 
   const contextValue = {
     user,
-    setUser, 
     isLoading,
     login,
     logout,
     googleAuth,
     requestPasswordReset,
-    updateUserPassword,
   };
 
   return (

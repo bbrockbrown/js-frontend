@@ -23,12 +23,13 @@ export const StyledInput = styled.input`
   padding: 8px;
   border: solid 2px var(--text);
   border-radius: 8px;
-  width: 375px;
+  width: 100%;
+  box-sizing: border-box;
 `;
 
 export const PasswordContainer = styled.div`
   position: relative;
-  width: fit-content;
+  width: 100%;
 `;
 
 export const IconContainer = styled.div`

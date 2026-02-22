@@ -12,26 +12,6 @@ export const StyledForm = styled.form`
   margin-top: 40px;
 `;
 
-export const StyledInput = styled.input`
-  font-size: 1rem;
-  padding: 8px;
-  border-radius: 8px;
-  width: 375px;
-`;
-
-export const PasswordContainer = styled.div`
-  position: relative;
-  width: fit-content;
-`;
-
-export const IconContainer = styled.div`
-  position: absolute;
-  right: 10px;
-  top: 8px;
-  background-color: var(--white);
-  cursor: pointer;
-`;
-
 export const StyledPage = styled.div`
   flex: 1 0 0;
   display: flex;

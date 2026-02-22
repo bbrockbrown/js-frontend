@@ -2,6 +2,8 @@ import { useEffect, useState } from 'react';
 
 import styled from 'styled-components';
 
+import { auth } from '@/firebase-config';
+
 const UsersContainer = styled.div`
   margin-top: 2rem;
   width: 100%;
@@ -55,7 +57,7 @@ export default function UsersList() {
   useEffect(() => {
     const fetchUsers = async () => {
       try {
-        const token = localStorage.getItem('authToken');
+        const token = await auth.currentUser?.getIdToken();
         const response = await fetch(
           `${import.meta.env.VITE_BACKEND_URL}/auth/users`,
           {
