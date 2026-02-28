@@ -24,19 +24,13 @@ const StyledLink = styled(Link)`
   }
 `;
 
-// Firebase Error Codes are quite unreadable, so map them to our own user-friendly messages
+// Firebase Error Codes are quite unreadable, so map them to our own user-friendly messages. Add more cases as needed.
 function mapAuthCodeToMessage(authCode) {
   switch (authCode) {
     case "auth/invalid-email":
       return "Please enter a valid email address.";
-    case "auth/user-not-found":
-      return "No account found with this email.";
-    case "auth/wrong-password":
-      return "The password you entered is incorrect.";
-    case "auth/weak-password":
-      return "Your password is too weak. It must be at least 6 characters long.";
-    case "auth/email-already-in-use":
-      return "This email address is already associated with another account.";
+    case "auth/invalid-credential":
+      return "Email or password is incorrect. Please try again.";
     default:
       return "An unexpected error occurred. Please try again.";
   }
