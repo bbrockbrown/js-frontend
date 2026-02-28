@@ -24,6 +24,24 @@ const StyledLink = styled(Link)`
   }
 `;
 
+// Firebase Error Codes are quite unreadable, so map them to our own user-friendly messages
+function mapAuthCodeToMessage(authCode) {
+  switch (authCode) {
+    case "auth/invalid-email":
+      return "Please enter a valid email address.";
+    case "auth/user-not-found":
+      return "No account found with this email.";
+    case "auth/wrong-password":
+      return "The password you entered is incorrect.";
+    case "auth/weak-password":
+      return "Your password is too weak. It must be at least 6 characters long.";
+    case "auth/email-already-in-use":
+      return "This email address is already associated with another account.";
+    default:
+      return "An unexpected error occurred. Please try again.";
+  }
+}
+
 export default function Login() {
   const navigate = useNavigate();
   const { login, googleAuth } = useUser();
@@ -49,7 +67,7 @@ export default function Login() {
       await login(formState.email, formState.password);
       navigate('/', { replace: true });
     } catch (error) {
-      setError(error.message || 'Failed to login. Please try again.');
+      setError(mapAuthCodeToMessage(error.code));
     } finally {
       setIsLoading(false);
     }
