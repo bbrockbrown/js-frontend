@@ -13,7 +13,7 @@ import ResetPassword from '@/pages/account/ResetPassword';
 import SignUp from '@/pages/account/SignUp';
 import Home from '@/pages/home/Home';
 import NotFound from '@/pages/not-found/NotFound';
-
+import AdminDashBoard from './pages/admin/AdminDashBoard';
 import './App.css';
 
 export default function App() {
@@ -24,7 +24,9 @@ export default function App() {
           <Route path='/' element={<NavLayout />}>
             <Route element={<PrivateRoute />}>
               <Route index element={<Home />} />
+              
             </Route>
+            <Route path='admin-dashboard' element={<AdminDashBoard />} />
             <Route element={<PublicOnlyRoute />}>
               <Route path='login' element={<Login />} />
               <Route path='signup' element={<SignUp />} />
