@@ -1,6 +1,6 @@
-import PropTypes from 'prop-types';
+import Avatar from '@/common/components/atoms/Avatar';
 import { LogOut } from 'lucide-react';
-import Avatar from 'common/components/Avatar';
+import PropTypes from 'prop-types';
 
 const styles = {
   footer: {

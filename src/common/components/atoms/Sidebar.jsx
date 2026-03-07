@@ -1,7 +1,7 @@
+import NavItem from '@/common/components/atoms/NavItem';
+import UserProfile from '@/common/components/atoms/UserProfile';
+import { DollarSign, LayoutDashboard, Users } from 'lucide-react';
 import PropTypes from 'prop-types';
-import { LayoutDashboard, DollarSign, Users } from 'lucide-react';
-import NavItem from 'common/components/NavItem';
-import UserProfile from 'common/components/UserProfile';
 
 const NAV_ITEMS = [
   { label: 'Dashboard', icon: LayoutDashboard, id: 'dashboard' },
