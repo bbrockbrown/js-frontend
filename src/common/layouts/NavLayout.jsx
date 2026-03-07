@@ -5,7 +5,7 @@ import NavBar from '@/common/components/navigation/NavBar';
 import styled from 'styled-components';
 
 const Layout = styled.div`
-  height: 100vh;
+  min-height: 100vh;
   display: flex;
   flex-direction: column;
 `;
@@ -13,8 +13,9 @@ const Layout = styled.div`
 const Body = styled.div`
   display: flex;
   flex: 1;
-  min-height: 0;
+  height: calc(100vh - 20px);
   background: #f5f5f4;
+  overflow: hidden;
 `;
 
 export default function NavLayout() {
@@ -35,7 +36,9 @@ export default function NavLayout() {
         {!hideSidebar && (
           <Sidebar activePage={activePage} onNavigate={handleNavigate} />
         )}
-        <Outlet />
+        <div style={{ flex: 1, overflowY: 'auto' }}>
+          <Outlet />
+        </div>
       </Body>
     </Layout>
   );

@@ -1,18 +1,17 @@
 import PropTypes from 'prop-types';
 
 const colorMap = {
-  sent: { background: '#22c55e', color: '#fff' },
-  pending: { background: '#f97316', color: '#fff' },
-  failed: { background: '#ef4444', color: '#fff' },
+  sent: { background: '#00A63E', color: '#fff' },
+  pending: { background: '#FF8040', color: '#fff' },
 };
 
 const badgeStyle = (status) => ({
   display: 'inline-flex',
   alignItems: 'center',
   padding: '3px 10px',
-  borderRadius: '20px',
+  borderRadius: '8px',
   fontSize: '12px',
-  fontWeight: '600',
+  fontWeight: '500',
   ...(colorMap[status] || { background: '#e5e7eb', color: '#374151' }),
 });
 

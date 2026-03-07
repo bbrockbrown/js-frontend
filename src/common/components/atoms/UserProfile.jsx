@@ -30,6 +30,7 @@ const styles = {
     cursor: 'pointer',
     color: '#9ca3af',
     padding: '4px',
+    paddingLeft: '8px',
     borderRadius: '4px',
     display: 'flex',
     alignItems: 'center',
@@ -40,7 +41,7 @@ const styles = {
 export default function UserProfile({ initials, name, email, onLogout }) {
   return (
     <div style={styles.footer}>
-      <Avatar initials={initials} />
+      <Avatar size={30} initials={initials} />
       <div style={styles.userInfo}>
         <div style={styles.userName}>{name}</div>
         <div style={styles.userEmail}>{email}</div>
