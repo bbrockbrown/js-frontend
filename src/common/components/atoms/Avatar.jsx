@@ -1,3 +1,12 @@
+/*
+  Avatar component
+  Used for displaying user initials or profile pictures in a circular frame located on the right sidebar
+
+  Props:
+    - initials (string): The initials to display.
+    - size (number, optional): The diameter of the avatar in pixels. Defaults to 34.
+*/
+
 import PropTypes from 'prop-types';
 
 const avatarStyle = (size) => ({

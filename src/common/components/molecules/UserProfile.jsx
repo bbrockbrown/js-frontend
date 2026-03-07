@@ -1,3 +1,14 @@
+/*
+  UserProfile component
+  Used for displaying the user profile with the initials, name, and email at the bottom of the sidebar
+
+  Props:
+    - initials (string): The initials to display.
+    - name (string): The name to display.
+    - email (string): The email to display.
+    - onLogout (function): The function to call when the logout button is clicked.
+*/
+
 import Avatar from '@/common/components/atoms/Avatar';
 import { LogOut } from 'lucide-react';
 import PropTypes from 'prop-types';

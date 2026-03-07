@@ -1,6 +1,6 @@
 import { Outlet, useLocation, useNavigate } from 'react-router-dom';
 
-import Sidebar from '@/common/components/atoms/Sidebar';
+import Sidebar from '@/common/components/organisms/Sidebar';
 import PropTypes from 'prop-types';
 
 const layoutStyle = {

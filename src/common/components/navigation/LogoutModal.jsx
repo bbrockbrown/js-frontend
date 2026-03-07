@@ -1,3 +1,13 @@
+/*
+  LogoutModal component
+  Used for displaying a modal with a logout button.
+
+  Props:
+    - isOpen (boolean): Whether the modal is open.
+    - onClose (function): The function to call when the modal is closed.
+    - onLogout (function): The function to call when the logout button is clicked.
+*/
+
 import PropTypes from 'prop-types';
 import styled from 'styled-components';
 

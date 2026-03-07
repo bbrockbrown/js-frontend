@@ -1,5 +1,14 @@
+/*
+  Sidebar component
+  Used for displaying the sidebar with the navigation items and the user profile.
+
+  Props:
+    - activePage (string): The active page.
+    - onNavigate (function): The function to call when the navigation item is clicked.
+*/
+
 import NavItem from '@/common/components/atoms/NavItem';
-import UserProfile from '@/common/components/atoms/UserProfile';
+import UserProfile from '@/common/components/molecules/UserProfile';
 import { DollarSign, LayoutDashboard, Users } from 'lucide-react';
 import PropTypes from 'prop-types';
 

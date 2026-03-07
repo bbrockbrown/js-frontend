@@ -1,3 +1,14 @@
+/*
+  NavItem component
+  Used for displaying a navigation item with an icon and a label on the right sidebar
+
+  Props:
+    - label (string): The label to display.
+    - icon (elementType): The icon to display.
+    - active (boolean): Whether the item is active.
+    - onClick (function): The function to call when the item is clicked.
+*/
+
 import PropTypes from 'prop-types';
 
 const btnStyle = (active) => ({
