@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
-import { Button } from '@/common/components/atoms/CommonButton';
+import Button from '@/common/components/atoms/CommonButton';
 import { useUser } from '@/common/contexts/UserContext';
 import styled from 'styled-components';
 
@@ -20,7 +20,10 @@ const LeftAligned = styled.div`
   gap: 10px;
 `;
 
-const LogoPlaceholder = styled(Button.Invisible)`
+const LogoPlaceholder = styled.button`
+  border: none;
+  background: transparent;
+  cursor: pointer;
   padding: 0;
   font-size: 1.7rem;
   font-weight: bold;
@@ -56,15 +59,17 @@ export default function NavBar() {
         <LogoPlaceholder onClick={() => navigate('/')}>[LOGO]</LogoPlaceholder>
       </LeftAligned>
       {user ? (
-        <Button.Secondary onClick={handleLogoutClick}>Log Out</Button.Secondary>
+        <Button variant='outline' onClick={handleLogoutClick}>
+          Log Out
+        </Button>
       ) : (
         <>
-          <Button.Primary onClick={() => navigate('/signup')}>
+          <Button variant='outline' onClick={() => navigate('/signup')}>
             Sign Up
-          </Button.Primary>
-          <Button.Secondary onClick={() => navigate('/login')}>
+          </Button>
+          <Button variant='ghost' onClick={() => navigate('/login')}>
             Login
-          </Button.Secondary>
+          </Button>
         </>
       )}
       <LogoutModal
