@@ -22,6 +22,7 @@ export default function NavLayout() {
   const location = useLocation();
 
   const activePage = location.pathname.replace('/', '') || 'dashboard';
+  const hideSidebar = location.pathname === '/login';
 
   const handleNavigate = (pageId) => {
     navigate(`/${pageId}`);
@@ -31,7 +32,9 @@ export default function NavLayout() {
     <Layout>
       <NavBar />
       <Body>
-        <Sidebar activePage={activePage} onNavigate={handleNavigate} />
+        {!hideSidebar && (
+          <Sidebar activePage={activePage} onNavigate={handleNavigate} />
+        )}
         <Outlet />
       </Body>
     </Layout>
