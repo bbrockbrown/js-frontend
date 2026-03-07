@@ -9,7 +9,6 @@ import { Input } from '@/common/components/form/Input';
 import SubmitButton from '@/common/components/form/SubmitButton';
 import { RedSpan } from '@/common/components/form/styles';
 import { useUser } from '@/common/contexts/UserContext';
-import { Button } from '@/common/components/atoms/Button';
 
 import { StyledPage } from './styles';
 
@@ -100,9 +99,6 @@ export default function Login() {
         <SubmitButton disabled={isLoading}>
           {isLoading ? 'Logging in...' : 'Log In'}
         </SubmitButton>
-        <Button.Navy onClick={() => navigate('/signup')}>
-          Sign Up
-        </Button.Navy>
         <GoogleButton
           onClick={handleGoogleLogin}
           isLoading={isLoading}

@@ -1,9 +1,7 @@
-import React from 'react'
+import React from 'react';
 
 const RecentVolunteer = () => {
-  return (
-    <div>RecentVolunteer</div>
-  )
-}
+  return <div>RecentVolunteer</div>;
+};
 
-export default RecentVolunteer
+export default RecentVolunteer;

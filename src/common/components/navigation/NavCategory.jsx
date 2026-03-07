@@ -1,5 +1,7 @@
-import React from 'react'
-import {Button} from '@/common/components/atoms/Button'
+import React from 'react';
+
+import { Button } from '@/common/components/atoms/Button';
+
 import DashboardIcon from '../../../assets/images/Dashboard.png';
 import AcknowledgementsIcon from '../../../assets/images/acknowledgements.png';
 import EventsIcon from '../../../assets/images/events.png';
@@ -14,7 +16,7 @@ const icons = {
   Acknowledgements: AcknowledgementsIcon,
 };
 
-const NavCategory = ({name, icon, toggle}) => {
+const NavCategory = ({ name, icon, toggle }) => {
   const iconStyle = {
     width: '20px',
     height: '20px',
@@ -23,15 +25,16 @@ const NavCategory = ({name, icon, toggle}) => {
 
   return (
     <Button.Nav>
-      {toggle ? 
-      <>
-        <img src={icons[icon]} alt={name} style={iconStyle}/> 
-        {name} 
-      </>
-      :
-      <img src={icons[icon]} alt={name} style={iconStyle}/>}
-      </Button.Nav>
-  )
-}
+      {toggle ? (
+        <>
+          <img src={icons[icon]} alt={name} style={iconStyle} />
+          {name}
+        </>
+      ) : (
+        <img src={icons[icon]} alt={name} style={iconStyle} />
+      )}
+    </Button.Nav>
+  );
+};
 
-export default NavCategory
+export default NavCategory;
