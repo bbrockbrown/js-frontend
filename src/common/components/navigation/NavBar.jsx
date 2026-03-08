@@ -9,23 +9,63 @@ import { useUser } from '@/common/contexts/UserContext';
 import LogoutModal from './LogoutModal';
 
 const StyledNav = styled.nav`
-  display: flex;
-  gap: 10px;
-  padding: 10px 20px;
-  font-size: 20px;
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
+  align-items: center;
+  padding: 1.25rem 2rem;
+  background-color: white;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.08);
+  font-family: var(--font-agenda);
 `;
 
-const LeftAligned = styled.div`
-  flex: 1;
-  display: flex;
-  gap: 10px;
-`;
-
-const LogoPlaceholder = styled(Button.Invisible)`
+const LogoLink = styled.button`
+  background: none;
+  border: none;
   padding: 0;
-  font-size: 1.7rem;
-  font-weight: bold;
-  font-family: monospace;
+  cursor: pointer;
+  justify-self: start;
+`;
+
+const LogoImg = styled.img`
+  height: 58px;
+  width: auto;
+  display: block;
+`;
+
+const NavTitle = styled.span`
+  font-size: 1.35rem;
+  font-weight: 600;
+  color: var(--rsae-gold);
+  justify-self: center;
+`;
+
+const NavRight = styled.div`
+  display: flex;
+  gap: 10px;
+  justify-self: end;
+`;
+
+const StaffLoginBtn = styled(Button.Secondary)`
+  padding: 10px 24px;
+  border-radius: 10px;
+  background-color: var(--rsae-light-blue) !important;
+  border-color: var(--rsae-light-blue) !important;
+  color: white !important;
+`;
+
+const PublicViewLink = styled.button`
+  background: none;
+  border: none;
+  padding: 8px 16px;
+  font-size: 1rem;
+  color: #4a5568;
+  cursor: pointer;
+  font-family: var(--font-agenda);
+  font-weight: 500;
+
+  &:hover {
+    color: var(--rsae-gold);
+  }
 `;
 
 export default function NavBar() {
@@ -53,21 +93,27 @@ export default function NavBar() {
 
   return (
     <StyledNav>
-      <LeftAligned>
-        <LogoPlaceholder onClick={() => navigate('/')}>[LOGO]</LogoPlaceholder>
-      </LeftAligned>
-      {user ? (
-        <Button.Secondary onClick={handleLogoutClick}>Log Out</Button.Secondary>
-      ) : (
-        <>
-          <Button.Primary onClick={() => navigate('/signup')}>
-            Sign Up
-          </Button.Primary>
-          <Button.Secondary onClick={() => navigate('/login')}>
-            Login
-          </Button.Secondary>
-        </>
-      )}
+      <LogoLink onClick={() => navigate('/')}>
+        <LogoImg src="/rsae-logo.png" alt="RSAE" />
+      </LogoLink>
+      <NavTitle>Staff Portal</NavTitle>
+      <NavRight>
+        <PublicViewLink onClick={() => navigate('/')}>
+          Public View
+        </PublicViewLink>
+        {user ? (
+          <Button.Secondary onClick={handleLogoutClick}>Log Out</Button.Secondary>
+        ) : (
+          <>
+            <Button.Primary onClick={() => navigate('/app/signup')}>
+              Sign Up
+            </Button.Primary>
+            <StaffLoginBtn onClick={() => navigate('/app/login')}>
+              Login
+            </StaffLoginBtn>
+          </>
+        )}
+      </NavRight>
       <LogoutModal
         isOpen={isModalOpen}
         onClose={handleModalClose}

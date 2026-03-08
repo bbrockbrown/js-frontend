@@ -5,6 +5,15 @@
   --darkgrey: #747474;
   --white: #fff;
   --text: #191a23;
+  /* Public View / RSAE branding */
+  --rsae-gold: rgb(154, 131, 72);
+  --rsae-gold-hex: #9a8348;
+  --rsae-black: #4a5568;
+  --rsae-light-blue: #7eb8da;
+  --rsae-bg: #f5f3ef;
+  --rsae-cream: #f0ebe3;
+  --font-agenda: 'Agenda', 'Agenda One', 'Barlow Condensed', -apple-system,
+    sans-serif;
 }
 
 * {

@@ -23,14 +23,20 @@ UserProvider.propTypes = {
   children: PropTypes.node.isRequired,
 };
 
-const buildUrl = (endpoint) =>
-  `${import.meta.env.VITE_BACKEND_URL.replace(/\/$/, '')}${endpoint}`;
+const buildUrl = (endpoint) => {
+  const base = import.meta.env.VITE_BACKEND_URL || 'http://localhost:5050';
+  return `${String(base).replace(/\/$/, '')}${endpoint}`;
+};
 
 export function UserProvider({ children }) {
   const [user, setUser] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
+    if (!auth) {
+      setIsLoading(false);
+      return;
+    }
     const unsubscribe = onAuthStateChanged(auth, async (firebaseUser) => {
       if (firebaseUser) {
         try {
@@ -58,6 +64,7 @@ export function UserProvider({ children }) {
   }, []);
 
   const login = async (email, password) => {
+    if (!auth) throw new Error('Firebase not configured. Add .env with Firebase keys.');
     try {
       await signInWithEmailAndPassword(auth, email, password);
       return true;
@@ -68,6 +75,7 @@ export function UserProvider({ children }) {
   };
 
   const logout = async () => {
+    if (!auth) return true;
     try {
       await signOut(auth);
       return true;
@@ -79,6 +87,7 @@ export function UserProvider({ children }) {
 
   // Signs in with Google popup and syncs the user to the MySQL backend.
   const googleAuth = async () => {
+    if (!auth || !googleProvider) throw new Error('Firebase not configured.');
     try {
       const result = await signInWithPopup(auth, googleProvider);
       const idToken = await result.user.getIdToken();
@@ -96,6 +105,7 @@ export function UserProvider({ children }) {
   };
 
   const requestPasswordReset = async (email) => {
+    if (!auth) throw new Error('Firebase not configured. Add .env with Firebase keys.');
     try {
       await sendPasswordResetEmail(auth, email);
       return true;

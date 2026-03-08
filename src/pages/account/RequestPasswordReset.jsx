@@ -65,7 +65,7 @@ export default function RequestPasswordReset() {
           <SubmitButton onClick={() => {}} disabled={isLoading}>
             {isLoading ? 'Sending...' : 'Send Reset Email'}
           </SubmitButton>
-          <StyledLink to='/login'>Back to Login</StyledLink>
+          <StyledLink to='/app/login'>Back to Login</StyledLink>
         </>
       ) : (
         <>
@@ -74,7 +74,7 @@ export default function RequestPasswordReset() {
             check your inbox and follow the instructions. If you don&apos;t see
             it within a few minutes, check your spam folder.
           </SuccessMessage>
-          <StyledLink to='/login'>Back to Login</StyledLink>
+          <StyledLink to='/app/login'>Back to Login</StyledLink>
         </>
       )}
     </Form>

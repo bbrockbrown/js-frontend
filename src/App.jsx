@@ -13,6 +13,7 @@ import ResetPassword from '@/pages/account/ResetPassword';
 import SignUp from '@/pages/account/SignUp';
 import Home from '@/pages/home/Home';
 import NotFound from '@/pages/not-found/NotFound';
+import PublicView from '@/pages/public-view/PublicView';
 
 import './App.css';
 
@@ -21,9 +22,11 @@ export default function App() {
     <UserProvider>
       <BrowserRouter>
         <Routes>
-          <Route path='/' element={<NavLayout />}>
+          <Route path='/' element={<PublicView />} />
+          <Route path='/app' element={<NavLayout />}>
             <Route element={<PrivateRoute />}>
               <Route index element={<Home />} />
+              <Route path='home' element={<Home />} />
             </Route>
             <Route element={<PublicOnlyRoute />}>
               <Route path='login' element={<Login />} />

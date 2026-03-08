@@ -29,7 +29,7 @@ export default function AuthCallback() {
         const result = await getRedirectResult(auth);
 
         if (!result) {
-          navigate('/', { replace: true });
+          navigate('/app', { replace: true });
           return;
         }
 
@@ -50,10 +50,10 @@ export default function AuthCallback() {
           throw new Error(error.error || 'Authentication failed');
         }
 
-        navigate('/', { replace: true });
+        navigate('/app', { replace: true });
       } catch (error) {
         console.error('Auth callback error:', error);
-        navigate('/login', {
+        navigate('/app/login', {
           state: { error: error.message },
           replace: true,
         });

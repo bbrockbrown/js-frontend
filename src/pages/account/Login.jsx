@@ -59,7 +59,7 @@ export default function Login() {
 
     try {
       await login(formState.email, formState.password);
-      navigate('/', { replace: true });
+      navigate('/app', { replace: true });
     } catch (error) {
       setError(mapAuthCodeToMessage(error.code));
     } finally {
@@ -95,7 +95,7 @@ export default function Login() {
           onChange={handleChange}
           required
         />
-        <StyledLink to='/forgot-password'>Forgot Password?</StyledLink>
+        <StyledLink to='/app/forgot-password'>Forgot Password?</StyledLink>
         <SubmitButton disabled={isLoading}>
           {isLoading ? 'Logging in...' : 'Log In'}
         </SubmitButton>

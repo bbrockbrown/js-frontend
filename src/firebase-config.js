@@ -2,22 +2,30 @@
 import { initializeApp } from 'firebase/app';
 import { GoogleAuthProvider, getAuth } from 'firebase/auth';
 
-// TODO: Add SDKs for Firebase products that you want to use
-// https://firebase.google.com/docs/web/setup#available-libraries
+const env = import.meta.env;
 
-// Your web app's Firebase configuration
-// For Firebase JS SDK v7.20.0 and later, measurementId is optional
+// Use placeholder config when env vars are missing (e.g. no .env file)
 const firebaseConfig = {
-  apiKey: import.meta.env.VITE_FIREBASE_API_KEY,
-  authDomain: import.meta.env.VITE_FIREBASE_AUTH_DOMAIN,
-  projectId: import.meta.env.VITE_FIREBASE_PROJECT_ID,
-  storageBucket: import.meta.env.VITE_FIREBASE_STORAGE_BUCKET,
-  messagingSenderId: import.meta.env.VITE_FIREBASE_MESSAGING_SENDER_ID,
-  appId: import.meta.env.VITE_FIREBASE_APP_ID,
-  measurementId: import.meta.env.VITE_FIREBASE_MEASUREMENT_ID,
+  apiKey: env.VITE_FIREBASE_API_KEY || 'demo-key',
+  authDomain: env.VITE_FIREBASE_AUTH_DOMAIN || 'demo.firebaseapp.com',
+  projectId: env.VITE_FIREBASE_PROJECT_ID || 'demo-project',
+  storageBucket: env.VITE_FIREBASE_STORAGE_BUCKET || 'demo.appspot.com',
+  messagingSenderId: env.VITE_FIREBASE_MESSAGING_SENDER_ID || '123456789',
+  appId: env.VITE_FIREBASE_APP_ID || '1:123456789:web:abc',
+  measurementId: env.VITE_FIREBASE_MEASUREMENT_ID,
 };
 
-// Initialize Firebase
-const app = initializeApp(firebaseConfig);
-export const auth = getAuth(app);
-export const googleProvider = new GoogleAuthProvider();
+let auth;
+let googleProvider;
+
+try {
+  const app = initializeApp(firebaseConfig);
+  auth = getAuth(app);
+  googleProvider = new GoogleAuthProvider();
+} catch (err) {
+  console.warn('Firebase init failed (missing .env?):', err.message);
+  auth = null;
+  googleProvider = null;
+}
+
+export { auth, googleProvider };
