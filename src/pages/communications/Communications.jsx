@@ -28,7 +28,7 @@ const PageTitle = styled.h1`
   color: var(--text);
 `;
 
-const TAB_TRIANGLE_BLUE = '#e0f2fe';
+const TAB_TRIANGLE_BLUE = '#c0e6ff';
 const TAB_INACTIVE_GRAY = '#d1d5db';
 
 const TabCardWrapper = styled.div`
