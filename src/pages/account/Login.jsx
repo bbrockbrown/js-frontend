@@ -9,7 +9,7 @@ import { Input } from '@/common/components/form/Input';
 import SubmitButton from '@/common/components/form/SubmitButton';
 import { RedSpan } from '@/common/components/form/styles';
 import { useUser } from '@/common/contexts/UserContext';
-
+import Footer  from '@/pages/account/Footer'
 import { StyledPage } from './styles';
 
 const StyledLink = styled(Link)`
@@ -23,6 +23,7 @@ const StyledLink = styled(Link)`
     text-decoration: underline;
   }
 `;
+
 
 // Firebase Error Codes are quite unreadable, so map them to our own user-friendly messages. Add more cases as needed.
 function mapAuthCodeToMessage(authCode) {
@@ -83,7 +84,7 @@ export default function Login() {
         <Input.Text
           title='Email'
           name='email'
-          placeholder='jsmith or j@example.com'
+          placeholder='jsmith@example.com'
           value={formState.email}
           onChange={handleChange}
           required
@@ -105,6 +106,9 @@ export default function Login() {
           text='Sign in with Google'
         />
       </Form>
+      <div style={{ display: "flex", justifyContent: "flex-start" }}>
+        <Footer />
+      </div>
     </StyledPage>
   );
 }

@@ -18,6 +18,7 @@ import './App.css';
 
 export default function App() {
   return (
+    <>
     <UserProvider>
       <BrowserRouter>
         <Routes>
@@ -40,5 +41,6 @@ export default function App() {
         </Routes>
       </BrowserRouter>
     </UserProvider>
+    </>
   );
 }
