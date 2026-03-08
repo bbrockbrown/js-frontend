@@ -111,7 +111,7 @@ const TotalFunds = styled.div`
   align-items: center;
   justify-content: center;
   text-align: center;
-  margin-bottom: 0;
+  margin-bottom: 1rem;
   padding: 1.5rem 2rem;
   background: linear-gradient(135deg, #ffffff 0%, #f8f6f1 100%);
   border-radius: 16px;
