@@ -218,7 +218,7 @@ export default function SubmissionForm() {
       return;
     }
     console.log('Form is valid:', formData);
-    setSuccess('Proposal submitted successfully');
+    setSuccess('Proposal submitted successfully!');
   }
 
 
