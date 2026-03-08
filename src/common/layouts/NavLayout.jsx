@@ -1,20 +1,20 @@
+import React, { useContext } from 'react';
 import { Outlet } from 'react-router-dom';
-
-import styled from 'styled-components';
-
-import NavBar from '@/common/components/navigation/NavBar';
-
-const Layout = styled.div`
-  height: 100vh;
-  display: flex;
-  flex-direction: column;
-`;
+import { UserContext } from '@/common/contexts/UserContext';
+import UserHeader from '@/common/components/navigation/UserHeader';
+import AdminHeader from '@/common/components/navigation/AdminHeader';
 
 export default function NavLayout() {
+  const context = useContext(UserContext);
+  
+  const isAdmin = context?.user?.role === 'admin'; // changing which header shows based on wether admin or not
+
   return (
-    <Layout>
-      <NavBar />
-      <Outlet />
-    </Layout>
+    <>
+      {isAdmin ? <AdminHeader /> : <UserHeader />}
+      <main>
+        <Outlet /> 
+      </main>
+    </>
   );
 }
