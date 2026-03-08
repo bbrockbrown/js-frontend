@@ -11,7 +11,7 @@ const StyledNav = styled.nav`
   justify-content: space-between;
   align-items: center;
   padding: 24px 40px;
-  background-color: #5d8e8a; 
+  background-color: #e0f2fe; 
   color: white;
   /* Matching the clean, modern font-family from the first image */
   font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
@@ -19,30 +19,33 @@ const StyledNav = styled.nav`
 
 const LeftGroup = styled.div`
   display: flex;
-  align-items: center;
+  align-items: center; /* Vertically centers Logo and About */
   gap: 35px;
 `;
 
 const RightGroup = styled.div`
   display: flex;
-  gap: 15px;
+  align-items: center; /* Vertically centers Sign In and Get Started button */
+  gap: 25px; /* Increased gap slightly for better breathing room */
 `;
 
 const LogoText = styled.h1`
-  font-size: 32px; /* Slightly larger as per the first image */
-  font-weight: 400; /* Lighter weight to match the clean look */
+  font-size: 32px;
+  font-weight: 400;
   margin: 0;
+  line-height: 1; /* Prevents extra spacing above/below the letters */
   cursor: pointer;
-  color: #ffffff; /* Explicitly white */
+  color: #000000;
   letter-spacing: -0.5px;
 `;
 
 const NavLink = styled.span`
   font-size: 15px;
-  color: #ffffff; /* Changed from dark to white */
+  color: #000000;
   opacity: 0.85;
   cursor: pointer;
-  margin-top: 4px; 
+  /* margin-top: 4px;  <-- REMOVED THIS */
+  line-height: 1; /* Keeps text height consistent */
   
   &:hover {
     opacity: 1;
@@ -56,8 +59,10 @@ const BaseButton = styled.button`
   font-weight: 500;
   font-size: 15px;
   cursor: pointer;
-  color: #ffffff; /* Ensuring button text is pure white */
+  color: #ffffff;
   font-family: inherit;
+  display: flex;         /* Added to help center text inside button */
+  align-items: center;   /* Added to help center text inside button */
   transition: transform 0.1s ease;
 
   &:active {
@@ -65,12 +70,8 @@ const BaseButton = styled.button`
   }
 `;
 
-const SignInButton = styled(BaseButton)`
-  background-color: #b37659; 
-`;
-
 const GetStartedButton = styled(BaseButton)`
-  background-color: #7b5d8e; 
+  background-color: #000000; 
 `;
 
 // --- Component ---
@@ -107,9 +108,9 @@ export default function NavBar() {
           <SignInButton onClick={handleLogoutClick}>Log Out</SignInButton>
         ) : (
           <>
-            <SignInButton onClick={() => navigate('/login')}>
+            <NavLink onClick={() => navigate('/login')}>
               Sign In
-            </SignInButton>
+            </NavLink>
             <GetStartedButton onClick={() => navigate('/signup')}>
               Get Started
             </GetStartedButton>
