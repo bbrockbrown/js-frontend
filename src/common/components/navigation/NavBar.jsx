@@ -122,18 +122,20 @@ export default function NavBar() {
             ) : null}
           </LogoPlaceholder>
         </div>
-        <NavCategory name='Dashboard' icon='Dashboard' toggle={toggle} />
-        <NavCategory name='Events' icon='Events' toggle={toggle} />
-        <NavCategory name='Volunteers' icon='Volunteers' toggle={toggle} />
+        <NavCategory name='Dashboard' icon='Dashboard' toggle={toggle} onClick={() => navigate('/admin-dashboard')} />
+        <NavCategory name='Events' icon='Events' toggle={toggle} onClick={() => navigate('/admin-events')} />
+        <NavCategory name='Volunteers' icon='Volunteers' toggle={toggle} onClick={() => navigate('/admin-volunteers')} />
         <NavCategory
           name='Registrations'
           icon='Registrations'
           toggle={toggle}
+          onClick={() => navigate('/admin-registrations')}
         />
         <NavCategory
           name='Acknowledgements'
           icon='Acknowledgements'
           toggle={toggle}
+          onClick={() => navigate('/admin-acknowledgements')}
         />
       </TopAligned>
       {!toggle ? (
