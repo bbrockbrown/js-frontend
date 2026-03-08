@@ -7,6 +7,7 @@ import { Button } from '@/common/components/atoms/Button';
 import { useUser } from '@/common/contexts/UserContext';
 
 import LogoutModal from './LogoutModal';
+import Header from '@/pages/account/Header';
 
 const StyledNav = styled.nav`
   display: flex;
@@ -53,6 +54,9 @@ export default function NavBar() {
 
   return (
     <StyledNav>
+      <div style={{ display: "flex", justifyContent: "flex-start", zindex: "500" }}>
+          <Header />
+      </div>
       <LeftAligned>
         <LogoPlaceholder onClick={() => navigate('/')}>[LOGO]</LogoPlaceholder>
       </LeftAligned>
