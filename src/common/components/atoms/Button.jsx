@@ -13,11 +13,13 @@ const ButtonPrimary = styled(ButtonBase)`
   background-color: var(--primary-orange);
   border-color: var(--primary-orange);
   color: var(--white);
+  z-index: 900;
 `;
 
 const ButtonSecondary = styled(ButtonBase)`
   background-color: var(--secondary-lightgrey);
   border-color: var(--text);
+  z-index: 800;
 `;
 
 const ButtonTransparent = styled(ButtonBase)`

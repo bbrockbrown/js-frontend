@@ -27,6 +27,8 @@ const LogoPlaceholder = styled(Button.Invisible)`
   font-size: 1.7rem;
   font-weight: bold;
   font-family: monospace;
+  margin-top: 10px;
+  z-index: 900;
 `;
 
 export default function NavBar() {

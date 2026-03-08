@@ -1,4 +1,4 @@
-const Footer_Primary = () => (
+const Header_Primary = () => (
   <footer
     style={{
       backgroundColor: "var(--primary-blue)",
@@ -6,7 +6,7 @@ const Footer_Primary = () => (
       position: "fixed",
       width: "100%",
       left: 0,
-      height: "70px",
+      height: "80px",
       top: 0,
       color: "var(--primary-blue)"
     }}
@@ -14,6 +14,6 @@ const Footer_Primary = () => (
   </footer>
 );
 
-export default function Footer() {
-    return <Footer_Primary />;
+export default function Header() {
+    return <Header_Primary />;
 };
