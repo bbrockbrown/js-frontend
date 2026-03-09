@@ -6,20 +6,29 @@ import styled from 'styled-components';
 import { Button } from '@/common/components/atoms/Button';
 import { useUser } from '@/common/contexts/UserContext';
 
+import logo from '@/assets/icons/Logo_Signin.webp';
+
 import LogoutModal from './LogoutModal';
 import Header from '@/pages/account/Header';
 
 const StyledNav = styled.nav`
   display: flex;
   gap: 10px;
-  padding: 10px 20px;
+  padding: 20px 20px;
   font-size: 20px;
 `;
 
-const LeftAligned = styled.div`
+const RightAligned = styled.div`
   flex: 1;
   display: flex;
+  justify-content: flex-end;
   gap: 10px;
+`;
+
+const CenterAligned = styled.div`
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
 `;
 
 const LogoPlaceholder = styled(Button.Invisible)`
@@ -59,9 +68,12 @@ export default function NavBar() {
       <div style={{ display: "flex", justifyContent: "flex-start", zindex: "500" }}>
           <Header />
       </div>
-      <LeftAligned>
-        <LogoPlaceholder onClick={() => navigate('/')}>[LOGO]</LogoPlaceholder>
-      </LeftAligned>
+      <CenterAligned>
+        <LogoPlaceholder onClick={() => navigate('/')}>
+          <img src={logo} alt="Logo" style={{ height: "75px" }}/>
+        </LogoPlaceholder>
+      </CenterAligned>
+      <RightAligned>
       {user ? (
         <Button.Secondary onClick={handleLogoutClick}>Log Out</Button.Secondary>
       ) : (
@@ -74,6 +86,7 @@ export default function NavBar() {
           </Button.Secondary>
         </>
       )}
+      </RightAligned>
       <LogoutModal
         isOpen={isModalOpen}
         onClose={handleModalClose}
