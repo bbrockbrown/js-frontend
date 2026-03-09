@@ -28,7 +28,6 @@ const HomePage = styled.div`
   align-items: flex-start; 
   text-align: left;
   padding: 100px 80px; 
-  background-color: #cde8fa; 
 `;
 
 const BaseButton = styled.button`
