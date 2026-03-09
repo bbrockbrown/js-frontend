@@ -1,10 +1,10 @@
 import PropTypes from 'prop-types';
 import styled from 'styled-components';
 
-const STATUS_COLORS = {
-  out_of_stock: '#f8b4b4',
-  low_stock: '#fde68a',
-  normal: 'transparent',
+const getRowBackground = (status, index) => {
+  if (status === 'out_of_stock') return '#f8b4b4';
+  if (status === 'low_stock') return '#fde68a';
+  return index % 2 === 0 ? '#ffffff' : '#eef1f6';
 };
 
 const Row = styled.div`
@@ -12,32 +12,39 @@ const Row = styled.div`
   align-items: center;
   justify-content: space-between;
   padding: 10px 16px;
-  background-color: ${({ $status }) => STATUS_COLORS[$status] || 'transparent'};
-  border-bottom: 1px solid #e5e7eb;
+  background-color: ${({ $bg }) => $bg};
+  border-bottom: 1px solid #e8ecf2;
   cursor: pointer;
-  transition: background-color 0.15s;
+  transition: opacity 0.15s;
+
+  &:last-child {
+    border-bottom: none;
+  }
 
   &:hover {
-    opacity: 0.85;
+    opacity: 0.8;
   }
 `;
 
 const ItemName = styled.span`
   font-size: 14px;
-  color: #1f2937;
+  color: #1a2b4a;
 `;
 
 const Quantity = styled.span`
   font-size: 14px;
   font-weight: 600;
-  color: #1f2937;
-  min-width: 40px;
+  color: #1a2b4a;
+  min-width: 50px;
   text-align: right;
 `;
 
-export default function ItemRow({ item, onClick }) {
+export default function ItemRow({ item, onClick, index }) {
   return (
-    <Row $status={item.status} onClick={() => onClick?.(item)}>
+    <Row
+      $bg={getRowBackground(item.status, index)}
+      onClick={() => onClick?.(item)}
+    >
       <ItemName>{item.name}</ItemName>
       <Quantity>{item.total_quantity}</Quantity>
     </Row>
@@ -52,4 +59,5 @@ ItemRow.propTypes = {
     status: PropTypes.oneOf(['out_of_stock', 'low_stock', 'normal']).isRequired,
   }).isRequired,
   onClick: PropTypes.func,
+  index: PropTypes.number,
 };

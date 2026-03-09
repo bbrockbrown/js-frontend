@@ -1,5 +1,10 @@
 import { useMemo, useState } from 'react';
 
+import { BiSearch } from 'react-icons/bi';
+import { BsGrid3X3GapFill } from 'react-icons/bs';
+import { FiClock } from 'react-icons/fi';
+import { HiOutlineUser } from 'react-icons/hi';
+import { MdOutlineDocumentScanner } from 'react-icons/md';
 import styled from 'styled-components';
 
 import PantryLogo from '@/assets/icons/pantry-logo.svg';
@@ -12,81 +17,99 @@ const PageWrapper = styled.div`
   height: 100vh;
   display: flex;
   flex-direction: column;
-  background-color: #f9fafb;
+  background-color: #eef1f6;
 `;
 
 const TopBar = styled.div`
   display: flex;
   align-items: center;
-  gap: 12px;
-  padding: 12px 20px;
+  gap: 16px;
+  padding: 14px 24px;
   background-color: #ffffff;
-  border-bottom: 1px solid #e5e7eb;
+  border-bottom: 1px solid #d6dce8;
 `;
 
 const LogoImg = styled.img`
-  width: 36px;
-  height: 36px;
+  width: 40px;
+  height: 40px;
   flex-shrink: 0;
 `;
 
 const PageTitle = styled.h1`
-  font-size: 16px;
-  font-weight: 600;
-  color: #1f2937;
+  font-size: 18px;
+  font-weight: 700;
+  color: #1a2b4a;
   margin: 0;
   white-space: nowrap;
 `;
 
-const SearchWrapper = styled.div`
+const SearchContainer = styled.div`
   flex: 1;
   display: flex;
   align-items: center;
-  max-width: 320px;
+  max-width: 360px;
+  background-color: #f0f3f8;
+  border: 1px solid #d6dce8;
+  border-radius: 24px;
+  padding: 0 14px;
+  gap: 8px;
+`;
+
+const SearchIcon = styled(BiSearch)`
+  color: #6b7b95;
+  font-size: 18px;
+  flex-shrink: 0;
 `;
 
 const SearchInput = styled.input`
   width: 100%;
-  padding: 6px 12px;
-  border: 1px solid #d1d5db;
-  border-radius: 6px;
-  font-size: 13px;
+  padding: 8px 0;
+  border: none;
+  background: none;
+  font-size: 14px;
   outline: none;
-
-  &:focus {
-    border-color: #1e3a5f;
-  }
+  color: #1a2b4a;
 
   &::placeholder {
-    color: #9ca3af;
+    color: #8a97ad;
   }
 `;
 
 const NavIcons = styled.div`
   display: flex;
   align-items: center;
-  gap: 12px;
+  gap: 16px;
   margin-left: auto;
 `;
 
 const NavIcon = styled.button`
   background: none;
   border: none;
-  font-size: 20px;
+  font-size: 22px;
   cursor: pointer;
-  padding: 4px;
-  color: #374151;
-  border-radius: 4px;
+  padding: 6px;
+  color: #1a2b4a;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 
   &:hover {
-    background-color: #f3f4f6;
+    background-color: #eef1f6;
   }
 `;
 
 const Content = styled.div`
   flex: 1;
   overflow-y: auto;
-  padding: 16px 20px;
+  padding: 16px 24px;
+`;
+
+const EmptyMessage = styled.p`
+  color: #8a97ad;
+  text-align: center;
+  margin-top: 40px;
+  font-size: 14px;
 `;
 
 export default function InventoryPage() {
@@ -133,7 +156,6 @@ export default function InventoryPage() {
   }, [activeTab, selectedCategoryId, searchQuery]);
 
   const handleItemClick = (item) => {
-    // TODO: open ItemDetailModal
     console.log('Item clicked:', item.name);
   };
 
@@ -142,19 +164,20 @@ export default function InventoryPage() {
       <TopBar>
         <LogoImg src={PantryLogo} alt="New Trier Township" />
         <PageTitle>New Trier Township Food Pantry Inventory</PageTitle>
-        <SearchWrapper>
+        <SearchContainer>
+          <SearchIcon />
           <SearchInput
             type="text"
             placeholder="Search for an item..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
           />
-        </SearchWrapper>
+        </SearchContainer>
         <NavIcons>
-          <NavIcon title="Inventory">📋</NavIcon>
-          <NavIcon title="Check In">📦</NavIcon>
-          <NavIcon title="Activity">🕐</NavIcon>
-          <NavIcon title="Profile">👤</NavIcon>
+          <NavIcon title="Inventory"><BsGrid3X3GapFill /></NavIcon>
+          <NavIcon title="Check In"><MdOutlineDocumentScanner /></NavIcon>
+          <NavIcon title="Activity"><FiClock /></NavIcon>
+          <NavIcon title="Profile"><HiOutlineUser /></NavIcon>
         </NavIcons>
       </TopBar>
 
@@ -169,9 +192,7 @@ export default function InventoryPage() {
 
       <Content>
         {filteredCategories.length === 0 ? (
-          <p style={{ color: '#9ca3af', textAlign: 'center', marginTop: 40 }}>
-            No categories found.
-          </p>
+          <EmptyMessage>No categories found.</EmptyMessage>
         ) : (
           filteredCategories.map((category) => (
             <CategorySection

@@ -1,31 +1,31 @@
 import { useState, useRef, useEffect } from 'react';
 
+import { FiFilter, FiPlus } from 'react-icons/fi';
 import PropTypes from 'prop-types';
 import styled from 'styled-components';
 
 const TabContainer = styled.div`
   display: flex;
   align-items: center;
-  gap: 0;
-  border-bottom: 2px solid #e5e7eb;
-  padding: 0 16px;
-  position: relative;
+  padding: 0 24px;
+  background-color: #ffffff;
+  border-bottom: 1px solid #d6dce8;
 `;
 
 const Tab = styled.button`
   background: none;
   border: none;
-  padding: 10px 20px;
+  padding: 12px 24px;
   font-size: 14px;
   cursor: pointer;
-  color: ${({ $active }) => ($active ? '#1e3a5f' : '#6b7280')};
-  border-bottom: 2px solid ${({ $active }) => ($active ? '#1e3a5f' : 'transparent')};
-  margin-bottom: -2px;
-  font-weight: ${({ $active }) => ($active ? '600' : '400')};
+  color: ${({ $active }) => ($active ? '#1a2b4a' : '#6b7b95')};
+  border-bottom: 3px solid ${({ $active }) => ($active ? '#1a2b4a' : 'transparent')};
+  font-weight: ${({ $active }) => ($active ? '700' : '400')};
   white-space: nowrap;
+  transition: all 0.15s;
 
   &:hover {
-    color: #1e3a5f;
+    color: #1a2b4a;
   }
 `;
 
@@ -33,24 +33,25 @@ const RightSection = styled.div`
   margin-left: auto;
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 12px;
 `;
 
 const AddButton = styled.button`
-  background-color: #1e3a5f;
+  background-color: #2a4d8f;
   color: #ffffff;
   border: none;
   border-radius: 50%;
-  width: 28px;
-  height: 28px;
-  font-size: 18px;
+  width: 30px;
+  height: 30px;
+  font-size: 16px;
   cursor: pointer;
   display: flex;
   align-items: center;
   justify-content: center;
+  transition: background-color 0.15s;
 
   &:hover {
-    background-color: #2d4a6f;
+    background-color: #1e3a6e;
   }
 `;
 
@@ -58,14 +59,17 @@ const FilterAllButton = styled.button`
   background: none;
   border: none;
   font-size: 13px;
-  color: #6b7280;
+  color: #6b7b95;
   cursor: pointer;
   display: flex;
   align-items: center;
   gap: 4px;
+  padding: 6px 8px;
+  border-radius: 6px;
 
   &:hover {
-    color: #1e3a5f;
+    color: #1a2b4a;
+    background-color: #f0f3f8;
   }
 `;
 
@@ -76,15 +80,15 @@ const DropdownWrapper = styled.div`
 
 const Dropdown = styled.div`
   position: absolute;
-  top: 100%;
+  top: calc(100% + 4px);
   left: 0;
   background: #ffffff;
-  border: 1px solid #d1d5db;
-  border-radius: 6px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-  min-width: 200px;
+  border: 1px solid #d6dce8;
+  border-radius: 8px;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.12);
+  min-width: 220px;
   z-index: 10;
-  margin-top: 4px;
+  padding: 4px 0;
 `;
 
 const DropdownItem = styled.button`
@@ -93,15 +97,15 @@ const DropdownItem = styled.button`
   text-align: left;
   background: none;
   border: none;
-  padding: 8px 16px;
+  padding: 10px 16px;
   font-size: 13px;
   cursor: pointer;
-  color: ${({ $active }) => ($active ? '#1e3a5f' : '#374151')};
+  color: ${({ $active }) => ($active ? '#1a2b4a' : '#374151')};
   font-weight: ${({ $active }) => ($active ? '600' : '400')};
-  background-color: ${({ $active }) => ($active ? '#eff6ff' : 'transparent')};
+  background-color: ${({ $active }) => ($active ? '#eef1f6' : 'transparent')};
 
   &:hover {
-    background-color: #f3f4f6;
+    background-color: #f0f3f8;
   }
 `;
 
@@ -164,7 +168,7 @@ export default function TabBar({
           $active={activeTab === 'food'}
           onClick={() => handleTabClick('food')}
         >
-          Food Items ▼
+          Food Items ▾
         </Tab>
         {openDropdown === 'food' && (
           <Dropdown>
@@ -192,7 +196,7 @@ export default function TabBar({
           $active={activeTab === 'non_food'}
           onClick={() => handleTabClick('non_food')}
         >
-          Non-Food Items ▼
+          Non-Food Items ▾
         </Tab>
         {openDropdown === 'non_food' && (
           <Dropdown>
@@ -216,8 +220,8 @@ export default function TabBar({
       </DropdownWrapper>
 
       <RightSection>
-        <AddButton title="Add Category">+</AddButton>
-        <FilterAllButton>Filter All 🔽</FilterAllButton>
+        <AddButton title="Add Category"><FiPlus /></AddButton>
+        <FilterAllButton><span>Filter All</span> <FiFilter size={14} /></FilterAllButton>
       </RightSection>
     </TabContainer>
   );
