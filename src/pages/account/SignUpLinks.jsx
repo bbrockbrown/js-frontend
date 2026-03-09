@@ -8,12 +8,12 @@ import { RedSpan } from '@/common/components/form/styles';
 
 import { StyledPage } from './styles';
 
-export default function  GenerateUrl() {
+export default function  SignUpLinks() {
   const [error, setError] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [inviteLink, setInviteLink] = useState('');
 
-  const handleGenerate = async () => {
+  const getLink = async () => {
     setIsLoading(true);
     setError('');
     setInviteLink('');
@@ -28,7 +28,7 @@ export default function  GenerateUrl() {
       }
       setInviteLink(data.inviteLink);
     } catch (error) {
-      setError(error.message || "Failed to fet?");
+      setError(error.message); // Add error message?
     }
     finally {
         setIsLoading(false);
@@ -39,9 +39,9 @@ export default function  GenerateUrl() {
   return (
     <StyledPage>
       <Form>
-        <FormTitle>Generate Invite URL</FormTitle>
+        <FormTitle>Generate Sign Up Link</FormTitle>
         {error && <RedSpan>{error}</RedSpan>}
-        <SubmitButton onClick={handleGenerate} disabled={isLoading}>
+        <SubmitButton onClick={getLink} disabled={isLoading}>
           {isLoading ? 'Generating invite link...' : 'Generate Invite Link'}
         </SubmitButton>
         {inviteLink && <p>{inviteLink}</p>}
