@@ -112,6 +112,8 @@ export default function TabBar({
   nonFoodCategories,
   selectedCategoryId,
   onCategorySelect,
+  onAddCategory,
+  onFilterAll,
 }) {
   const [openDropdown, setOpenDropdown] = useState(null);
   const dropdownRef = useRef(null);
@@ -216,8 +218,12 @@ export default function TabBar({
       </DropdownWrapper>
 
       <RightSection>
-        <AddButton title="Add Category">+</AddButton>
-        <FilterAllButton>Filter All 🔽</FilterAllButton>
+        <AddButton title="Add Category" onClick={onAddCategory}>
+          <FiPlus />
+        </AddButton>
+        <FilterAllButton onClick={onFilterAll}>
+          <span>Filter All</span> <FiFilter size={14} />
+        </FilterAllButton>
       </RightSection>
     </TabContainer>
   );
@@ -230,4 +236,6 @@ TabBar.propTypes = {
   nonFoodCategories: PropTypes.array.isRequired,
   selectedCategoryId: PropTypes.number,
   onCategorySelect: PropTypes.func.isRequired,
+  onAddCategory: PropTypes.func,
+  onFilterAll: PropTypes.func,
 };
