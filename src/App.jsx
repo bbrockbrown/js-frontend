@@ -8,6 +8,7 @@ import { UserProvider } from '@/common/contexts/UserContext';
 import NavLayout from '@/common/layouts/NavLayout';
 import AuthCallback from '@/pages/account/AuthCallback';
 import Login from '@/pages/account/Login';
+import SignUpLinks from '@/pages/account/SignUpLinks';
 import RequestPasswordReset from '@/pages/account/RequestPasswordReset';
 import ResetPassword from '@/pages/account/ResetPassword';
 import SignUp from '@/pages/account/SignUp';
@@ -25,6 +26,7 @@ export default function App() {
           <Route path='/' element={<NavLayout />}>
             <Route element={<PrivateRoute />}>
               <Route index element={<Home />} />
+              <Route path='signuplinks' element={<SignUpLinks/>} />
               <Route path='contacts' element={<Contacts />} />
             </Route>
             <Route element={<PublicOnlyRoute />}>
