@@ -11,6 +11,9 @@ import Login from '@/pages/account/Login';
 import RequestPasswordReset from '@/pages/account/RequestPasswordReset';
 import ResetPassword from '@/pages/account/ResetPassword';
 import SignUp from '@/pages/account/SignUp';
+import Communications from '@/pages/communications/Communications';
+import Dashboard from '@/pages/dashboard/Dashboard';
+import Database from '@/pages/database/Database';
 import Home from '@/pages/home/Home';
 import NotFound from '@/pages/not-found/NotFound';
 
@@ -22,9 +25,14 @@ export default function App() {
       <BrowserRouter>
         <Routes>
           <Route path='/' element={<NavLayout />}>
+            <Route index element={<Home />} />
+            {/* 2. Keep the empty PrivateRoute wrapper for future protected pages */}
             <Route element={<PrivateRoute />}>
-              <Route index element={<Home />} />
+               {/* Dashboard will go here later */}
             </Route>
+            <Route path='communications' element={<Communications />} />
+            <Route path='dashboard' element={<Dashboard />} />
+            <Route path='database' element={<Database />} />
             <Route element={<PublicOnlyRoute />}>
               <Route path='login' element={<Login />} />
               <Route path='signup' element={<SignUp />} />
