@@ -9,8 +9,15 @@ import { Input } from '@/common/components/form/Input';
 import SubmitButton from '@/common/components/form/SubmitButton';
 import { RedSpan } from '@/common/components/form/styles';
 import { useUser } from '@/common/contexts/UserContext';
-import Footer  from '@/pages/account/Footer'
+import Footer  from '@/pages/account/Footer';
 import { StyledPage } from './styles';
+
+
+const Layout = styled.div`
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+`;
 
 const StyledLink = styled(Link)`
   color: #007bff;

@@ -6,7 +6,7 @@ const Header_Primary = () => (
       position: "fixed",
       width: "100%",
       left: 0,
-      height: "140px",
+      height: "120px",
       top: 0,
       color: "var(--primary-blue)"
     }}
