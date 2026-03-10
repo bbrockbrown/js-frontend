@@ -30,10 +30,32 @@ const ButtonInvisible = styled(ButtonBase)`
   background-color: transparent;
   border-color: transparent;
 `;
-
+const ButtonNavy = styled(ButtonBase)`
+  background-color: #314552;
+  color: var(--white);
+  font-weight: bold;
+  font-size: 1.1em;
+`;
+const ButtonNav = styled(ButtonBase)`
+  font-size: 0.7em;
+  background-color: #314552;
+  color: var(--white);
+  font-weight: bold;
+  width: 100%;
+  height: 45px;
+  border: none;
+  display: flex;
+  align-items: center;
+  justify-content: left;
+  &:hover {
+    background-color: #3a4e5c;
+  }
+`;
 export const Button = {
   Primary: ButtonPrimary,
   Secondary: ButtonSecondary,
   Transparent: ButtonTransparent,
   Invisible: ButtonInvisible,
+  Navy: ButtonNavy,
+  Nav: ButtonNav,
 };

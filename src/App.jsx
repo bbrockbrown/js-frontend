@@ -15,7 +15,8 @@ import Home from '@/pages/home/Home';
 import NotFound from '@/pages/not-found/NotFound';
 
 import './App.css';
-
+import AdminDashBoard from './pages/admin/AdminDashBoard';
+import AdminEvents from './pages/admin/AdminEvents';
 export default function App() {
   return (
     <>
@@ -26,6 +27,8 @@ export default function App() {
             <Route element={<PrivateRoute />}>
               <Route index element={<Home />} />
             </Route>
+            <Route path='admin-dashboard' element={<AdminDashBoard />} />
+            <Route path='admin-events' element={<AdminEvents />} />
             <Route element={<PublicOnlyRoute />}>
               <Route path='login' element={<Login />} />
               <Route path='signup' element={<SignUp />} />

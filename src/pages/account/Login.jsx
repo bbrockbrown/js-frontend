@@ -1,7 +1,5 @@
 import React, { useState } from 'react';
-
 import { Link, useNavigate } from 'react-router-dom';
-import styled from 'styled-components';
 
 import GoogleButton from '@/common/components/atoms/GoogleButton';
 import { Form, FormTitle } from '@/common/components/form/Form';
@@ -10,6 +8,8 @@ import SubmitButton from '@/common/components/form/SubmitButton';
 import { RedSpan } from '@/common/components/form/styles';
 import { useUser } from '@/common/contexts/UserContext';
 import Footer  from '@/pages/account/Footer'
+import styled from 'styled-components';
+
 import { StyledPage } from './styles';
 
 const StyledLink = styled(Link)`
@@ -28,12 +28,12 @@ const StyledLink = styled(Link)`
 // Firebase Error Codes are quite unreadable, so map them to our own user-friendly messages. Add more cases as needed.
 function mapAuthCodeToMessage(authCode) {
   switch (authCode) {
-    case "auth/invalid-email":
-      return "Please enter a valid email address.";
-    case "auth/invalid-credential":
-      return "Email or password is incorrect. Please try again.";
+    case 'auth/invalid-email':
+      return 'Please enter a valid email address.';
+    case 'auth/invalid-credential':
+      return 'Email or password is incorrect. Please try again.';
     default:
-      return "An unexpected error occurred. Please try again.";
+      return 'An unexpected error occurred. Please try again.';
   }
 }
 
