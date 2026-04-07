@@ -1,6 +1,10 @@
-import { Link, useLocation } from 'react-router-dom';
+import { useState } from 'react';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 
+import { useUser } from '@/common/contexts/UserContext';
 import styled from 'styled-components';
+
+import LogoutModal from './LogoutModal';
 
 const HeaderContainer = styled.header`
   display: flex;
@@ -94,8 +98,44 @@ const Avatar = styled.div`
   font-weight: 800;
 `;
 
+const LogoutButton = styled.button`
+  background: none;
+  border: none;
+  color: #757575;
+  font-weight: 500;
+  font-size: 1.1rem;
+  cursor: pointer;
+  padding: 0;
+
+  &:hover {
+    color: #dc3545;
+  }
+`;
+
 export default function AdminHeader() {
   const { pathname } = useLocation();
+
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const navigate = useNavigate();
+  const { user, logout } = useUser();
+
+  const handleLogoutClick = () => {
+    setIsModalOpen(true);
+  };
+
+  const handleModalClose = () => {
+    setIsModalOpen(false);
+  };
+
+  const handleLogoutConfirm = async () => {
+    try {
+      await logout();
+      setIsModalOpen(false);
+      navigate('/', { replace: true });
+    } catch (error) {
+      console.error('Logout error:', error);
+    }
+  };
 
   return (
     <HeaderContainer>
@@ -129,9 +169,17 @@ export default function AdminHeader() {
       <RightSide>
         <BellIcon aria-label='Notifications'>&#128276;</BellIcon>
         <VerticalDivider aria-hidden='true' />
+        {user && (
+          <LogoutButton onClick={handleLogoutClick}>Log Out</LogoutButton>
+        )}
         <AdminText>Admin 1</AdminText>
         <Avatar>AD</Avatar>
       </RightSide>
+      <LogoutModal
+        isOpen={isModalOpen}
+        onClose={handleModalClose}
+        onLogout={handleLogoutConfirm}
+      />
     </HeaderContainer>
   );
 }

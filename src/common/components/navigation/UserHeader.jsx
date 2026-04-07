@@ -1,8 +1,11 @@
-import React from 'react';
-import { Link } from 'react-router-dom';
+import React, { useState } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
 
 import rsaeLogo from '@/assets/rsae-logo.jpg';
+import { useUser } from '@/common/contexts/UserContext';
 import styled from 'styled-components';
+
+import LogoutModal from './LogoutModal';
 
 // --- STYLED COMPONENTS ---
 
@@ -43,9 +46,45 @@ const StyledLink = styled(Link)`
   }
 `;
 
+const LogoutButton = styled.button`
+  background: none;
+  border: none;
+  color: #1a1a1a;
+  font-weight: 500;
+  font-size: inherit;
+  cursor: pointer;
+  padding: 0;
+
+  &:hover {
+    color: #dc3545;
+  }
+`;
+
 // --- COMPONENT RENDER ---
 
 export default function UserHeader() {
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const navigate = useNavigate();
+  const { user, logout } = useUser();
+
+  const handleLogoutClick = () => {
+    setIsModalOpen(true);
+  };
+
+  const handleModalClose = () => {
+    setIsModalOpen(false);
+  };
+
+  const handleLogoutConfirm = async () => {
+    try {
+      await logout();
+      setIsModalOpen(false);
+      navigate('/', { replace: true });
+    } catch (error) {
+      console.error('Logout error:', error);
+    }
+  };
+
   return (
     <HeaderContainer>
       <LogoContainer to='/'>
@@ -58,7 +97,11 @@ export default function UserHeader() {
       <NavLinks>
         <StyledLink to='/'>Home</StyledLink>
         <StyledLink to='/browse'>Browse Ideas</StyledLink>
-        <StyledLink to='/login'>Admin Log In</StyledLink>
+        {user ? (
+          <LogoutButton onClick={handleLogoutClick}>Log Out</LogoutButton>
+        ) : (
+          <StyledLink to='/login'>Admin Log In</StyledLink>
+        )}
 
         <Link to='/submit' style={{ textDecoration: 'none' }}>
           <button style={{ backgroundColor: '#E2B853', color: 'black' }}>
@@ -66,6 +109,12 @@ export default function UserHeader() {
           </button>
         </Link>
       </NavLinks>
+
+      <LogoutModal
+        isOpen={isModalOpen}
+        onClose={handleModalClose}
+        onLogout={handleLogoutConfirm}
+      />
     </HeaderContainer>
   );
 }
