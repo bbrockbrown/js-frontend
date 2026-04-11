@@ -20,9 +20,13 @@ export default function StatsRow() {
       .catch((err) => console.error('Failed to fetch dashboard summary:', err));
   }, []);
 
-  const growthValue = summary?.growth_rate == null
+  const growthRate = summary?.growth_rate;
+  const growthValue = growthRate == null
     ? 'N/A'
-    : `${summary.growth_rate > 0 ? '+' : ''}${summary.growth_rate}%`;
+    : `${growthRate > 0 ? '+' : ''}${growthRate}%`;
+  const growthColor = growthRate == null
+    ? '#9ca3af'
+    : growthRate >= 0 ? '#22c55e' : '#ef4444';
 
   const stats = [
     {
@@ -48,8 +52,8 @@ export default function StatsRow() {
       value: summary ? growthValue : '—',
       sub: 'vs last month',
       icon: ArrowUpRight,
-      iconColor: '#22c55e',
-      valueColor: '#22c55e',
+      iconColor: growthColor,
+      valueColor: growthColor,
     },
   ];
 

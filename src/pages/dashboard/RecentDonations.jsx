@@ -1,9 +1,9 @@
-import { useRef, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 
 import Badge from '@/common/components/atoms/Badge';
 import Card from '@/common/components/atoms/Card';
 import SectionTitle from '@/common/components/atoms/SectionTitle';
-import useDonations from '@/hooks/useDonations';
+import donationService from '@/services/donationService';
 import { formatAmount, formatDate } from '@/utils/format';
 import { Plus } from 'lucide-react';
 
@@ -152,12 +152,28 @@ function ActionsMenu({ onEdit, onDelete }) {
 }
 
 export default function RecentDonations() {
-  const { donations, loading, error, createDonation, updateDonation, deleteDonation } =
-    useDonations();
-
+  const [donations, setDonations] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
   const [modalOpen, setModalOpen] = useState(false);
   const [editing, setEditing] = useState(null);
   const [deleting, setDeleting] = useState(null);
+
+  const fetchRecent = useCallback(async () => {
+    setLoading(true);
+    setError(null);
+    try {
+      const res = await fetch(`${import.meta.env.VITE_BACKEND_URL}/dashboard/recent-donations`, { credentials: 'include' });
+      if (!res.ok) throw new Error(`Request failed (${res.status})`);
+      setDonations(await res.json());
+    } catch (err) {
+      setError(err.message);
+    } finally {
+      setLoading(false);
+    }
+  }, []);
+
+  useEffect(() => { fetchRecent(); }, [fetchRecent]);
 
   const openCreate = () => {
     setEditing(null);
@@ -167,11 +183,21 @@ export default function RecentDonations() {
     setEditing(d);
     setModalOpen(true);
   };
-  const handleSubmit = (data) =>
-    editing ? updateDonation(editing.id, data) : createDonation(data);
+  const handleSubmit = async (data) => {
+    if (editing) {
+      await donationService.update(editing.id, data);
+    } else {
+      await donationService.create(data);
+    }
+    await fetchRecent();
+  };
 
   const openDelete = (d) => setDeleting(d);
-  const handleDelete = () => deleteDonation(deleting.id);
+  const handleDelete = async () => {
+    await donationService.delete(deleting.id);
+    setDeleting(null);
+    await fetchRecent();
+  };
 
   return (
     <>
