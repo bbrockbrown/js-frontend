@@ -15,17 +15,24 @@ function DashboardCard({ title, children }) {
         'border-black',
         'flex',
         'flex-col',
-        expanded ? 'min-h-[32rem]' : 'min-h-[9rem]',
+        expanded ? 'min-h-[32rem]' : 'min-h-[9rem] justify-center',
     ].join(' ')
 
     return (
         <div className={cardClasses} onClick={() => setExpanded(!expanded)}>
-            <h2 className="m-0 mb-3 text-2xl text-slate-900">
-                {title}
-            </h2>
-            <div className="flex flex-1 items-center">
-                {expanded && children}
+            <div className="flex items-center justify-between">
+                <h2 className={`m-0 text-2xl text-slate-900 ${expanded ? 'mb-3' : ''}`}>
+                    {title}
+                </h2>
+                <span className="text-2xl text-slate-900 select-none pr-4">
+                    {expanded ? '−' : '+'}
+                </span>
             </div>
+            {expanded && (
+                <div className="flex flex-1 items-center">
+                    {children}
+                </div>
+            )}
         </div>
     )
 }
