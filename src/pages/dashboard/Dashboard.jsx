@@ -1,4 +1,5 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
+import { getAuth } from 'firebase/auth';
 
 function DashboardCard({ title, children }) {
     const [expanded, setExpanded] = useState(false)
@@ -27,8 +28,53 @@ function DashboardCard({ title, children }) {
 }
 
 function SummaryStats() {
+    const [pending, setPending] = useState(0);
+    const [read, setRead] = useState(0);
+    const [unread, setUnread] = useState(0);
+
+    useEffect(() => {
+        const fetchPending = async () => {
+            try {
+                const auth = getAuth();
+
+                if (!auth.currentUser) {
+                    return;
+                }
+                const token = await auth.currentUser.getIdToken();
+                
+                const response = await fetch(`${import.meta.env.VITE_BACKEND_URL}/scheduledsends/pending`, {
+                    headers: {
+                        Authorization: `Bearer ${token}`,
+                    },
+                });
+
+                if (!response.ok) {
+                    throw new Error('Failed to fetch pending sends');
+                }
+
+                const data = await response.json();
+                setPending(data.length);
+            } catch (error) {
+                console.error('Error fetching pending sends:', error);
+            }
+        };
+
+        fetchPending();
+
+        // TODO: hardcoded data for read/unread
+        // fix after endpoints r done
+        setRead(42);
+        setUnread(15);
+    }, []);
+
     return (
         <DashboardCard title="Summary and Statistics">
+            <div className="bg-orange-500 w-1/2 p-4 text-white rounded">
+                <h3 className="text-xl font-bold mb-2">Summary</h3>
+                <p>Pending: {pending}</p>
+                <p>Read: {read}</p>
+                <p>Unread: {unread}</p>
+            </div>
         </DashboardCard>
     )
 }
