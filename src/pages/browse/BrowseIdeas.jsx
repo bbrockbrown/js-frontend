@@ -315,7 +315,7 @@ export default function BrowseIdeas() {
             </>
           ) : null}
 
-          <SectionLabel>Tags</SectionLabel>
+          {/* <SectionLabel>Tags</SectionLabel>
           <TagWrap>
             <TagChip
               type='button'
@@ -334,7 +334,7 @@ export default function BrowseIdeas() {
                 {tag}
               </TagChip>
             ))}
-          </TagWrap>
+          </TagWrap> */}
 
           <ResetButton type='button' onClick={resetFilters}>
             Clear Filters
