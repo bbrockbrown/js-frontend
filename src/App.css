@@ -7,9 +7,10 @@
   --darkgrey: #747474;
   --white: #fff;
   --text: #191a23;
+  --clickedNav: #445f70;
 }
 
 * {
-  font-family: "Poppins", sans-serif;
+  font-family: Popins, sans-serif;
   color: var(--text);
 }

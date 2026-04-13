@@ -16,7 +16,8 @@ import Home from '@/pages/home/Home';
 import NotFound from '@/pages/not-found/NotFound';
 
 import './App.css';
-
+import AdminDashBoard from './pages/admin/AdminDashBoard';
+import AdminEvents from './pages/admin/AdminEvents';
 export default function App() {
   return (
     <>
