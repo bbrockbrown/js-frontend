@@ -2,6 +2,7 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 
 import rsaeLogo from '@/assets/rsae-logo.jpg';
+import ProposalSubmitButton from '@/common/components/buttons/ProposalSubmitButton';
 import styled from 'styled-components';
 
 // --- STYLED COMPONENTS ---
@@ -43,6 +44,11 @@ const StyledLink = styled(Link)`
   }
 `;
 
+const SubmitProposalLink = styled(Link)`
+  text-decoration: none;
+  flex-shrink: 0;
+`;
+
 // --- COMPONENT RENDER ---
 
 export default function UserHeader() {
@@ -60,11 +66,9 @@ export default function UserHeader() {
         <StyledLink to='/browse'>Browse Ideas</StyledLink>
         <StyledLink to='/login'>Admin Log In</StyledLink>
 
-        <Link to='/submit' style={{ textDecoration: 'none' }}>
-          <button style={{ backgroundColor: '#E2B853', color: 'black' }}>
-            Submit Proposal
-          </button>
-        </Link>
+        <SubmitProposalLink to='/submit'>
+          <ProposalSubmitButton type='button'>Submit Proposal</ProposalSubmitButton>
+        </SubmitProposalLink>
       </NavLinks>
     </HeaderContainer>
   );
