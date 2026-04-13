@@ -1,3 +1,12 @@
+/*
+  Card component
+  Used for displaying a card with a background color and a border.
+
+  Props:
+    - children (node): The content to display inside the card.
+    - style (object, optional): Additional CSS styles to apply to the card.
+*/
+
 import PropTypes from 'prop-types';
 
 const baseStyle = {

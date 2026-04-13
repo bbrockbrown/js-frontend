@@ -1,3 +1,13 @@
+/*
+  StatCard component
+  Used for displaying a statistic card with a label, value, and icon. Located on the dashboard page.
+
+  Props:
+    - label (string): The label to display.
+    - value (string): The value to display.
+    - sub (string): The subtitle to display.
+    - icon (elementType): The icon to display.
+*/
 import Card from '@/common/components/atoms/Card';
 import PropTypes from 'prop-types';
 

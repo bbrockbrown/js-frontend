@@ -1,3 +1,12 @@
+/*
+  Badge component
+  Used for displaying a status of a thank you letter sent to a donar.
+  Either "sent" or "pending".
+
+  Props:
+    - status (string): The status to display.
+*/
+
 import PropTypes from 'prop-types';
 
 const colorMap = {

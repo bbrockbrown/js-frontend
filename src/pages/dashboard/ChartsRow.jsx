@@ -1,7 +1,7 @@
 import Card from '@/common/components/atoms/Card';
 import SectionTitle from '@/common/components/atoms/SectionTitle';
-import { trendData, weekData } from '@/utils/chartData';
 import PropTypes from 'prop-types';
+import { useEffect, useState } from 'react';
 import {
   Bar,
   BarChart,
@@ -21,20 +21,32 @@ const rowStyle = {
 };
 
 const tooltipStyle = {
-  background: '#1a1a1a',
-  color: '#fff',
-  padding: '8px 12px',
+  background: '#fff',
+  border: '1px solid #e5e7eb',
   borderRadius: '8px',
+  padding: '8px 12px',
   fontSize: '13px',
-  fontWeight: '600',
+  boxShadow: '0 2px 8px rgba(0,0,0,0.08)',
+};
+
+const tooltipLabelStyle = {
+  color: '#6b7280',
+  fontWeight: '500',
+  marginBottom: '2px',
+};
+
+const tooltipValueStyle = {
+  color: '#1a1a1a',
+  fontWeight: '700',
+  fontSize: '14px',
 };
 
 function CustomTooltip({ active, payload, label }) {
-  if (active && payload?.length) {
+  if (active && payload?.length && payload[0].value != null) {
     return (
       <div style={tooltipStyle}>
-        <div>{label}</div>
-        <div>${payload[0].value.toLocaleString()}</div>
+        <div style={tooltipLabelStyle}>{label}</div>
+        <div style={tooltipValueStyle}>${Number(payload[0].value).toLocaleString()}</div>
       </div>
     );
   }
@@ -54,6 +66,25 @@ CustomTooltip.defaultProps = {
 };
 
 export default function ChartsRow() {
+  const [trendData, setTrendData] = useState([]);
+  const [monthlyData, setMonthlyData] = useState([]);
+
+  useEffect(() => {
+    fetch(`${import.meta.env.VITE_BACKEND_URL}/dashboard/trend`, {
+      credentials: 'include',
+    })
+      .then((res) => res.json())
+      .then((data) => setTrendData(data))
+      .catch((err) => console.error('Failed to fetch trend data:', err));
+
+    fetch(`${import.meta.env.VITE_BACKEND_URL}/dashboard/last6months`, {
+      credentials: 'include',
+    })
+      .then((res) => res.json())
+      .then((data) => setMonthlyData(data))
+      .catch((err) => console.error('Failed to fetch monthly data:', err));
+  }, []);
+
   return (
     <div style={rowStyle}>
       <Card style={{ flex: 1, padding: '22px 22px 16px' }}>
@@ -69,7 +100,7 @@ export default function ChartsRow() {
               vertical={false}
             />
             <XAxis
-              dataKey='week'
+              dataKey='year'
               tick={{ fontSize: 12, fill: '#9ca3af' }}
               axisLine={false}
               tickLine={false}
@@ -96,10 +127,10 @@ export default function ChartsRow() {
       </Card>
 
       <Card style={{ flex: 1, padding: '22px 22px 16px' }}>
-        <SectionTitle>Last 7 Days</SectionTitle>
+        <SectionTitle>Last 6 Months</SectionTitle>
         <ResponsiveContainer width='100%' height={200}>
           <BarChart
-            data={weekData}
+            data={monthlyData}
             margin={{ top: 4, right: 4, left: -20, bottom: 0 }}
             barSize={28}
           >
@@ -109,7 +140,7 @@ export default function ChartsRow() {
               vertical={false}
             />
             <XAxis
-              dataKey='day'
+              dataKey='month'
               tick={{ fontSize: 12, fill: '#9ca3af' }}
               axisLine={false}
               tickLine={false}

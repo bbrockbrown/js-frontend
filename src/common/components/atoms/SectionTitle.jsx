@@ -1,3 +1,11 @@
+/*
+  SectionTitle component
+  Used for displaying a section title with a font size, font weight, color, and margin bottom.
+
+  Props:
+    - children (node): The content to display inside the section title.
+*/
+
 import PropTypes from 'prop-types';
 
 const titleStyle = {

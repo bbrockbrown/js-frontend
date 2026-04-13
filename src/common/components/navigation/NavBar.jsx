@@ -1,3 +1,12 @@
+/*
+  NavBar component
+  Used for displaying the top navigation bar with the logo and the logout button.
+
+  Props:
+    - user (object): The user object.
+    - logout (function): The function to call when the logout button is clicked.
+*/
+
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
