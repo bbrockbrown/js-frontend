@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 
+import ProposalSubmitButton from '@/common/components/buttons/ProposalSubmitButton';
 import styled from 'styled-components';
 
 // --- STYLED COMPONENTS ---
@@ -386,17 +387,7 @@ export default function SubmissionForm() {
 
         {/* SUBMIT BUTTON */}
         <div style={{ display: 'flex', justifyContent: 'center' }}>
-          <button
-            type='submit'
-            style={{
-              backgroundColor: '#E2B853',
-              color: 'black',
-              padding: '1rem 3rem',
-              fontSize: '1.2rem',
-            }}
-          >
-            Submit Proposal
-          </button>
+          <ProposalSubmitButton type='submit'>Submit Proposal</ProposalSubmitButton>
         </div>
         {success && <p>{success}</p>}
       </FormContainer>

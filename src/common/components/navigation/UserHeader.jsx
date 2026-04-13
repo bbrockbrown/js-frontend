@@ -3,6 +3,7 @@ import { Link, useNavigate } from 'react-router-dom';
 
 import rsaeLogo from '@/assets/rsae-logo.jpg';
 import { useUser } from '@/common/contexts/UserContext';
+import ProposalSubmitButton from '@/common/components/buttons/ProposalSubmitButton';
 import styled from 'styled-components';
 
 import LogoutModal from './LogoutModal';
@@ -60,6 +61,11 @@ const LogoutButton = styled.button`
   }
 `;
 
+const SubmitProposalLink = styled(Link)`
+  text-decoration: none;
+  flex-shrink: 0;
+`;
+
 // --- COMPONENT RENDER ---
 
 export default function UserHeader() {
@@ -103,11 +109,9 @@ export default function UserHeader() {
           <StyledLink to='/login'>Admin Log In</StyledLink>
         )}
 
-        <Link to='/submit' style={{ textDecoration: 'none' }}>
-          <button style={{ backgroundColor: '#E2B853', color: 'black' }}>
-            Submit Proposal
-          </button>
-        </Link>
+        <SubmitProposalLink to='/submit'>
+          <ProposalSubmitButton type='button'>Submit Proposal</ProposalSubmitButton>
+        </SubmitProposalLink>
       </NavLinks>
 
       <LogoutModal
