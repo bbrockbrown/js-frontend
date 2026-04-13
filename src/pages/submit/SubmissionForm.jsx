@@ -223,7 +223,7 @@ export default function SubmissionForm() {
         title: `Proposal by ${formData.fullName}`,
         category: formData.category,
         description: formData.description,
-        submittedBy: formData.fullName
+        submittedBy: formData.fullName,
       };
 
       const response = await fetch('http://localhost:5050/proposals', {
@@ -241,13 +241,14 @@ export default function SubmissionForm() {
 
       const result = await response.json();
       console.log('Successfully saved to backend:', result);
-      
+
       setSuccess('Proposal submitted successfully!');
       setErrors({});
-    }
-    catch (error) {
+    } catch (error) {
       console.error('Submission error:', error);
-      setErrors({ submit: error.message || 'An error occurred while submitting.' });
+      setErrors({
+        submit: error.message || 'An error occurred while submitting.',
+      });
       setSuccess('');
     }
 
