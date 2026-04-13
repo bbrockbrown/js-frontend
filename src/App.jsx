@@ -6,6 +6,7 @@ import {
 } from '@/common/components/routes/ProtectedRoutes';
 import { UserProvider } from '@/common/contexts/UserContext';
 import NavLayout from '@/common/layouts/NavLayout';
+import NavLayout_login from '@/common/layouts/NavLayout_login';
 import AuthCallback from '@/pages/account/AuthCallback';
 import Login from '@/pages/account/Login';
 import RequestPasswordReset from '@/pages/account/RequestPasswordReset';
@@ -15,9 +16,11 @@ import Home from '@/pages/home/Home';
 import NotFound from '@/pages/not-found/NotFound';
 
 import './App.css';
-
+import AdminDashBoard from './pages/admin/AdminDashBoard';
+import AdminEvents from './pages/admin/AdminEvents';
 export default function App() {
   return (
+    <>
     <UserProvider>
       <BrowserRouter>
         <Routes>
@@ -25,6 +28,8 @@ export default function App() {
             <Route element={<PrivateRoute />}>
               <Route index element={<Home />} />
             </Route>
+          </Route>
+          <Route path='/' element={<NavLayout_login />}>
             <Route element={<PublicOnlyRoute />}>
               <Route path='login' element={<Login />} />
               <Route path='signup' element={<SignUp />} />
@@ -40,5 +45,6 @@ export default function App() {
         </Routes>
       </BrowserRouter>
     </UserProvider>
+    </>
   );
 }

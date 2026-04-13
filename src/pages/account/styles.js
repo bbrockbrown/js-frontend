@@ -1,6 +1,5 @@
-import styled from 'styled-components';
-
 import { Button } from '@/common/components/atoms/Button';
+import styled from 'styled-components';
 
 export const StyledForm = styled.form`
   display: flex;
@@ -26,4 +25,5 @@ export const StyledButton = styled(Button.Primary)`
   padding-right: 30px;
   margin-left: auto;
   margin-right: auto;
+  color: --cworange;
 `;
