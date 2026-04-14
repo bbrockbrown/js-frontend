@@ -2,8 +2,11 @@ import { useCallback, useEffect, useRef, useState } from 'react';
 
 import donationService from '@/services/donationService';
 
+const LIMIT = 25;
+
 export default function useDonations(filters = {}) {
   const [donations, setDonations] = useState([]);
+  const [total, setTotal] = useState(0);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
@@ -16,8 +19,12 @@ export default function useDonations(filters = {}) {
     setLoading(true);
     setError(null);
     try {
-      const data = await donationService.getAll(params);
-      setDonations(data);
+      const { donations: rows, total: count } = await donationService.getAll({
+        ...params,
+        limit: LIMIT,
+      });
+      setDonations(rows);
+      setTotal(count);
     } catch (err) {
       setError(err.message);
     } finally {
@@ -27,13 +34,13 @@ export default function useDonations(filters = {}) {
 
   // Debounce filter-driven fetches; destructure to avoid firing on every
   // render when the parent creates a new filters object each time
-  const { search, status, minAmount, maxAmount } = filters;
+  const { search, status, minAmount, maxAmount, page } = filters;
   useEffect(() => {
     const timer = setTimeout(() => {
-      fetchDonations({ search, status, minAmount, maxAmount });
+      fetchDonations({ search, status, minAmount, maxAmount, page });
     }, 300);
     return () => clearTimeout(timer);
-  }, [search, status, minAmount, maxAmount, fetchDonations]);
+  }, [search, status, minAmount, maxAmount, page, fetchDonations]);
 
   const createDonation = async (data) => {
     await donationService.create(data);
@@ -52,6 +59,8 @@ export default function useDonations(filters = {}) {
 
   return {
     donations,
+    total,
+    totalPages: Math.ceil(total / LIMIT),
     loading,
     error,
     createDonation,

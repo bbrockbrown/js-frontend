@@ -5,7 +5,9 @@
   Props:
     filters  – { search, status, minAmount, maxAmount }
     onChange – (field, value) => void
-    count    – number | null (null while loading)
+    page     – current page (1-indexed)
+    pageSize – rows per page
+    total    – total matching records (null while loading)
 */
 
 import Card from '@/common/components/atoms/Card';
@@ -68,8 +70,11 @@ const styles = {
   },
 };
 
-export default function DonationsFilterBar({ filters, onChange, count }) {
+export default function DonationsFilterBar({ filters, onChange, page, pageSize, total }) {
   const { search, status, minAmount, maxAmount } = filters;
+
+  const firstItem = total === null ? null : (page - 1) * pageSize + 1;
+  const lastItem = total === null ? null : Math.min(page * pageSize, total);
 
   return (
     <Card style={{ padding: '20px 24px' }}>
@@ -110,10 +115,13 @@ export default function DonationsFilterBar({ filters, onChange, count }) {
         />
       </div>
 
-      {count !== null && (
+      {total !== null && total > 0 && (
         <div style={styles.count}>
-          Showing {count} donation{count !== 1 ? 's' : ''}
+          Showing {firstItem}–{lastItem} of {total} donation{total !== 1 ? 's' : ''}
         </div>
+      )}
+      {total === 0 && (
+        <div style={styles.count}>No donations found.</div>
       )}
     </Card>
   );
@@ -127,5 +135,7 @@ DonationsFilterBar.propTypes = {
     maxAmount: PropTypes.string.isRequired,
   }).isRequired,
   onChange: PropTypes.func.isRequired,
-  count: PropTypes.number,
+  page: PropTypes.number.isRequired,
+  pageSize: PropTypes.number.isRequired,
+  total: PropTypes.number,
 };

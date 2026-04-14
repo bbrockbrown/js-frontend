@@ -1,6 +1,7 @@
 import { useState } from 'react';
 
 import Card from '@/common/components/atoms/Card';
+import Pagination from '@/common/components/atoms/Pagination';
 import DeleteConfirmModal from '@/common/components/organisms/DeleteConfirmModal';
 import DonationModal from '@/common/components/organisms/DonationModal';
 import DonationTable from '@/common/components/organisms/DonationTable';
@@ -50,22 +51,27 @@ const styles = {
   },
 };
 
+const PAGE_SIZE = 25;
 const INITIAL_FILTERS = { search: '', status: '', minAmount: '', maxAmount: '' };
 
 /* ── component ───────────────────────────────────────── */
 
 export default function DonationsPage() {
   const [filters, setFilters] = useState(INITIAL_FILTERS);
+  const [page, setPage] = useState(1);
   const [selected, setSelected] = useState(new Set());
   const [modalOpen, setModalOpen] = useState(false);
   const [editing, setEditing] = useState(null);
   const [deleting, setDeleting] = useState(null);
 
-  const { donations, loading, error, createDonation, updateDonation, deleteDonation } =
-    useDonations(filters);
+  const { donations, total, totalPages, loading, error, createDonation, updateDonation, deleteDonation } =
+    useDonations({ ...filters, page });
 
-  const handleFilterChange = (field, value) =>
+  // Reset to page 1 whenever a filter value changes
+  const handleFilterChange = (field, value) => {
+    setPage(1);
     setFilters((prev) => ({ ...prev, [field]: value }));
+  };
 
   const handleSelectChange = (id) => {
     setSelected((prev) => {
@@ -78,6 +84,11 @@ export default function DonationsPage() {
 
   const handleSelectAll = (selectAll) =>
     setSelected(selectAll ? new Set(donations.map((d) => d.id)) : new Set());
+
+  const handlePageChange = (newPage) => {
+    setPage(newPage);
+    setSelected(new Set());
+  };
 
   const openCreate = () => { setEditing(null); setModalOpen(true); };
   const openEdit = (d) => { setEditing(d); setModalOpen(true); };
@@ -110,7 +121,9 @@ export default function DonationsPage() {
       <DonationsFilterBar
         filters={filters}
         onChange={handleFilterChange}
-        count={loading ? null : donations.length}
+        page={page}
+        pageSize={PAGE_SIZE}
+        total={loading ? null : total}
       />
 
       <Card style={{ padding: '24px', marginTop: '16px' }}>
@@ -123,6 +136,12 @@ export default function DonationsPage() {
           onSelectAll={handleSelectAll}
           onEdit={openEdit}
           onDelete={(d) => setDeleting(d)}
+        />
+
+        <Pagination
+          page={page}
+          totalPages={totalPages}
+          onPageChange={handlePageChange}
         />
       </Card>
 
