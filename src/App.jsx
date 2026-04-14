@@ -31,12 +31,11 @@ export default function App() {
             <Route path='browse' element={<BrowseIdeas />} />
             <Route path='submit' element={<SubmissionForm />} />
 
-            {/* --- TEMPORARILY UNPROTECTED FOR TESTING --- */}
-            <Route path='dashboard' element={<DataDashboard />} />
-            <Route path='audit-log' element={<AuditLog />} />
-
             {/* PROTECTED ROUTES */}
-            <Route element={<PrivateRoute />}>{/* Empty for now! */}</Route>
+            <Route element={<PrivateRoute />}>
+              <Route path='dashboard' element={<DataDashboard />} />
+              <Route path='audit-log' element={<AuditLog />} />
+            </Route>
 
             {/* PUBLIC ONLY ROUTES */}
             <Route element={<PublicOnlyRoute />}>

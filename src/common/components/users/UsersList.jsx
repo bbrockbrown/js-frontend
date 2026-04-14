@@ -57,6 +57,10 @@ export default function UsersList() {
     const fetchUsers = async () => {
       try {
         const token = await auth.currentUser?.getIdToken();
+        if (!token) {
+          throw new Error('Admin login required.');
+        }
+
         const response = await fetch(
           `${import.meta.env.VITE_BACKEND_URL}/auth/users`,
           {
