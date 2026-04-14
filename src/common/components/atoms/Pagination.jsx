@@ -85,6 +85,7 @@ export default function Pagination({ page, totalPages, onPageChange }) {
           ...styles.btn,
           ...(page === 1 ? styles.btnDisabled : {}),
         }}
+        type='button'
         onClick={() => onPageChange(page - 1)}
         disabled={page === 1}
       >
@@ -99,6 +100,7 @@ export default function Pagination({ page, totalPages, onPageChange }) {
         ) : (
           <button
             key={p}
+            type='button'
             style={{
               ...styles.btn,
               ...(p === page ? styles.btnActive : {}),
@@ -115,6 +117,7 @@ export default function Pagination({ page, totalPages, onPageChange }) {
           ...styles.btn,
           ...(page === totalPages ? styles.btnDisabled : {}),
         }}
+        type='button'
         onClick={() => onPageChange(page + 1)}
         disabled={page === totalPages}
       >

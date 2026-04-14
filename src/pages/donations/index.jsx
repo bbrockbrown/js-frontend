@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 
 import Card from '@/common/components/atoms/Card';
 import Pagination from '@/common/components/atoms/Pagination';
@@ -6,6 +6,7 @@ import DeleteConfirmModal from '@/common/components/organisms/DeleteConfirmModal
 import DonationModal from '@/common/components/organisms/DonationModal';
 import DonationTable from '@/common/components/organisms/DonationTable';
 import useDonations from '@/hooks/useDonations';
+import { PAGE_SIZE } from '@/utils/pagination';
 import { Plus } from 'lucide-react';
 
 import DonationsFilterBar from './DonationsFilterBar';
@@ -51,7 +52,6 @@ const styles = {
   },
 };
 
-const PAGE_SIZE = 25;
 const INITIAL_FILTERS = { search: '', status: '', minAmount: '', maxAmount: '' };
 
 /* ── component ───────────────────────────────────────── */
@@ -64,8 +64,13 @@ export default function DonationsPage() {
   const [editing, setEditing] = useState(null);
   const [deleting, setDeleting] = useState(null);
 
-  const { donations, total, totalPages, loading, error, createDonation, updateDonation, deleteDonation } =
+  const { donations, total, totalPages, loading, error, onPageResetRef, createDonation, updateDonation, deleteDonation } =
     useDonations({ ...filters, page });
+
+  // Give the hook a way to reset the page to 1 after create/delete
+  useEffect(() => {
+    onPageResetRef.current = () => { setPage(1); setSelected(new Set()); };
+  });
 
   // Reset to page 1 whenever a filter value changes
   const handleFilterChange = (field, value) => {

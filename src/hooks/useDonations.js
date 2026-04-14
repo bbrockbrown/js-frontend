@@ -1,8 +1,7 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 
 import donationService from '@/services/donationService';
-
-const LIMIT = 25;
+import { PAGE_SIZE } from '@/utils/pagination';
 
 export default function useDonations(filters = {}) {
   const [donations, setDonations] = useState([]);
@@ -10,59 +9,74 @@ export default function useDonations(filters = {}) {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
-  // Keep a ref so mutations can always re-fetch with the latest filters
-  // without needing them as effect dependencies
+  // Lets mutations re-fetch with the latest filters without stale closures
   const filtersRef = useRef(filters);
   useEffect(() => { filtersRef.current = filters; });
 
-  const fetchDonations = useCallback(async (params) => {
+  // Callback exposed to the page so it can reset page to 1 after a mutation
+  const onPageResetRef = useRef(null);
+
+  const fetchDonations = useCallback(async (params, signal) => {
     setLoading(true);
     setError(null);
     try {
-      const { donations: rows, total: count } = await donationService.getAll({
-        ...params,
-        limit: LIMIT,
-      });
+      const { donations: rows, total: count } = await donationService.getAll(
+        { ...params, limit: PAGE_SIZE },
+        signal
+      );
       setDonations(rows);
       setTotal(count);
     } catch (err) {
-      setError(err.message);
+      // AbortError is expected when a newer request cancels this one — ignore it
+      if (err.name !== 'AbortError') setError(err.message);
     } finally {
-      setLoading(false);
+      // Only clear loading if this request wasn't aborted
+      if (!signal?.aborted) setLoading(false);
     }
   }, []);
 
-  // Debounce filter-driven fetches; destructure to avoid firing on every
-  // render when the parent creates a new filters object each time
+  // Debounced, cancellable fetch whenever filters change
   const { search, status, minAmount, maxAmount, page } = filters;
   useEffect(() => {
+    const controller = new AbortController();
     const timer = setTimeout(() => {
-      fetchDonations({ search, status, minAmount, maxAmount, page });
+      fetchDonations({ search, status, minAmount, maxAmount, page }, controller.signal);
     }, 300);
-    return () => clearTimeout(timer);
+    return () => {
+      clearTimeout(timer);
+      controller.abort();
+    };
   }, [search, status, minAmount, maxAmount, page, fetchDonations]);
+
+  const refetchAtPage1 = async () => {
+    onPageResetRef.current?.();
+    await fetchDonations({ ...filtersRef.current, page: 1 });
+  };
 
   const createDonation = async (data) => {
     await donationService.create(data);
-    await fetchDonations(filtersRef.current);
+    await refetchAtPage1();
   };
 
   const updateDonation = async (id, data) => {
     await donationService.update(id, data);
+    // Update doesn't change total count — re-fetch at current page
     await fetchDonations(filtersRef.current);
   };
 
   const deleteDonation = async (id) => {
     await donationService.delete(id);
-    await fetchDonations(filtersRef.current);
+    // Delete changes total count — go back to page 1 to avoid empty page
+    await refetchAtPage1();
   };
 
   return {
     donations,
     total,
-    totalPages: Math.ceil(total / LIMIT),
+    totalPages: Math.ceil(total / PAGE_SIZE),
     loading,
     error,
+    onPageResetRef,
     createDonation,
     updateDonation,
     deleteDonation,
