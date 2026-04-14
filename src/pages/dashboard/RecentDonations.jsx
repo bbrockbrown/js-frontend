@@ -1,39 +1,12 @@
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 
-import Badge from '@/common/components/atoms/Badge';
 import Card from '@/common/components/atoms/Card';
 import SectionTitle from '@/common/components/atoms/SectionTitle';
+import DeleteConfirmModal from '@/common/components/organisms/DeleteConfirmModal';
+import DonationModal from '@/common/components/organisms/DonationModal';
+import DonationTable from '@/common/components/organisms/DonationTable';
 import donationService from '@/services/donationService';
-import { formatAmount, formatDate } from '@/utils/format';
 import { Plus } from 'lucide-react';
-
-import DeleteConfirmModal from './DeleteConfirmModal';
-import DonationModal from './DonationModal';
-
-/* ── styles ───────────────────────────────────────── */
-
-const tableStyle = {
-  width: '100%',
-  borderCollapse: 'collapse',
-};
-
-const thStyle = {
-  textAlign: 'left',
-  fontSize: '12px',
-  fontWeight: '600',
-  color: '#9ca3af',
-  textTransform: 'uppercase',
-  letterSpacing: '0.05em',
-  paddingBottom: '12px',
-  borderBottom: '1px solid #f0f0ee',
-};
-
-const tdStyle = {
-  padding: '14px 0',
-  fontSize: '14px',
-  color: '#374151',
-  borderBottom: '1px solid #f9f9f8',
-};
 
 const headerRow = {
   display: 'flex',
@@ -56,105 +29,11 @@ const addBtn = {
   cursor: 'pointer',
 };
 
-const actionsBtnStyle = {
-  background: 'none',
-  border: 'none',
-  cursor: 'pointer',
-  color: '#9ca3af',
-  fontSize: '18px',
-  letterSpacing: '2px',
-  padding: '0 4px',
-  lineHeight: 1,
-  position: 'relative',
-};
-
-const menuStyle = {
-  position: 'absolute',
-  right: 0,
-  top: '100%',
-  background: '#fff',
-  border: '1px solid #e5e7eb',
-  borderRadius: '8px',
-  boxShadow: '0 4px 12px rgba(0,0,0,.1)',
-  zIndex: 10,
-  minWidth: '120px',
-  overflow: 'hidden',
-};
-
-const menuItem = {
-  display: 'block',
-  width: '100%',
-  padding: '8px 14px',
-  fontSize: '13px',
-  color: '#374151',
-  background: 'none',
-  border: 'none',
-  textAlign: 'left',
-  cursor: 'pointer',
-};
-
-const menuItemDanger = {
-  ...menuItem,
-  color: '#dc2626',
-};
-
-const statusMsg = {
-  padding: '40px 0',
-  textAlign: 'center',
-  fontSize: '14px',
-  color: '#6b7280',
-};
-
-const HEADERS = ['Name', 'Amount', 'Date', 'Receipt Status', 'Actions'];
-
-function ActionsMenu({ onEdit, onDelete }) {
-  const [open, setOpen] = useState(false);
-  const ref = useRef(null);
-
-  const toggle = () => setOpen((v) => !v);
-  const close = () => setOpen(false);
-
-  return (
-    <span ref={ref} style={{ position: 'relative' }}>
-      <button style={actionsBtnStyle} onClick={toggle}>
-        ···
-      </button>
-      {open && (
-        <>
-          <div
-            style={{ position: 'fixed', inset: 0, zIndex: 9 }}
-            onClick={close}
-          />
-          <div style={menuStyle}>
-            <button
-              style={menuItem}
-              onClick={() => {
-                close();
-                onEdit();
-              }}
-            >
-              Edit
-            </button>
-            <button
-              style={menuItemDanger}
-              onClick={() => {
-                close();
-                onDelete();
-              }}
-            >
-              Delete
-            </button>
-          </div>
-        </>
-      )}
-    </span>
-  );
-}
-
 export default function RecentDonations() {
   const [donations, setDonations] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [selected, setSelected] = useState(new Set());
   const [modalOpen, setModalOpen] = useState(false);
   const [editing, setEditing] = useState(null);
   const [deleting, setDeleting] = useState(null);
@@ -163,9 +42,13 @@ export default function RecentDonations() {
     setLoading(true);
     setError(null);
     try {
-      const res = await fetch(`${import.meta.env.VITE_BACKEND_URL}/dashboard/recent-donations`, { credentials: 'include' });
+      const res = await fetch(
+        `${import.meta.env.VITE_BACKEND_URL}/dashboard/recent-donations`,
+        { credentials: 'include' }
+      );
       if (!res.ok) throw new Error(`Request failed (${res.status})`);
       setDonations(await res.json());
+      setSelected(new Set());
     } catch (err) {
       setError(err.message);
     } finally {
@@ -175,14 +58,22 @@ export default function RecentDonations() {
 
   useEffect(() => { fetchRecent(); }, [fetchRecent]);
 
-  const openCreate = () => {
-    setEditing(null);
-    setModalOpen(true);
+  const handleSelectChange = (id) => {
+    setSelected((prev) => {
+      const next = new Set(prev);
+      if (next.has(id)) next.delete(id);
+      else next.add(id);
+      return next;
+    });
   };
-  const openEdit = (d) => {
-    setEditing(d);
-    setModalOpen(true);
+
+  const handleSelectAll = (selectAll) => {
+    setSelected(selectAll ? new Set(donations.map((d) => d.id)) : new Set());
   };
+
+  const openCreate = () => { setEditing(null); setModalOpen(true); };
+  const openEdit = (d) => { setEditing(d); setModalOpen(true); };
+
   const handleSubmit = async (data) => {
     if (editing) {
       await donationService.update(editing.id, data);
@@ -192,7 +83,6 @@ export default function RecentDonations() {
     await fetchRecent();
   };
 
-  const openDelete = (d) => setDeleting(d);
   const handleDelete = async () => {
     await donationService.delete(deleting.id);
     setDeleting(null);
@@ -209,50 +99,16 @@ export default function RecentDonations() {
           </button>
         </div>
 
-        {loading && <div style={statusMsg}>Loading donations…</div>}
-        {error && <div style={{ ...statusMsg, color: '#dc2626' }}>Error: {error}</div>}
-
-        {!loading && !error && (
-          <table style={tableStyle}>
-            <thead>
-              <tr>
-                {HEADERS.map((h) => (
-                  <th key={h} style={thStyle}>
-                    {h}
-                  </th>
-                ))}
-              </tr>
-            </thead>
-            <tbody>
-              {donations.length === 0 ? (
-                <tr>
-                  <td colSpan={HEADERS.length} style={statusMsg}>
-                    No donations found.
-                  </td>
-                </tr>
-              ) : (
-                donations.map((d) => (
-                  <tr key={d.id}>
-                    <td style={{ ...tdStyle, fontWeight: '500', color: '#1a1a1a' }}>
-                      {d.donor_name}
-                    </td>
-                    <td style={tdStyle}>{formatAmount(d.amount)}</td>
-                    <td style={tdStyle}>{formatDate(d.donation_date)}</td>
-                    <td style={tdStyle}>
-                      <Badge status={d.receipt_status} />
-                    </td>
-                    <td style={tdStyle}>
-                      <ActionsMenu
-                        onEdit={() => openEdit(d)}
-                        onDelete={() => openDelete(d)}
-                      />
-                    </td>
-                  </tr>
-                ))
-              )}
-            </tbody>
-          </table>
-        )}
+        <DonationTable
+          donations={donations}
+          loading={loading}
+          error={error}
+          selected={selected}
+          onSelectChange={handleSelectChange}
+          onSelectAll={handleSelectAll}
+          onEdit={openEdit}
+          onDelete={(d) => setDeleting(d)}
+        />
       </Card>
 
       <DonationModal
