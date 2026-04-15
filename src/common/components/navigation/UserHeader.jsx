@@ -14,9 +14,16 @@ const HeaderContainer = styled.header`
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 1.5rem 4rem;
+  
+  height: 100px;
+  padding: 0 4rem;
+  
   background-color: #ffffff;
   border-bottom: 1px solid #eaeaea;
+
+  @media (max-width: 1200px) {
+    padding: 0 1.5rem;
+  }
 `;
 
 const LogoContainer = styled(Link)`
@@ -38,7 +45,7 @@ const NavLinks = styled.nav`
 `;
 
 const StyledLink = styled(Link)`
-  text-decoration: none;
+  text-decoration:  none;
   color: #1a1a1a;
   font-weight: 500;
 
