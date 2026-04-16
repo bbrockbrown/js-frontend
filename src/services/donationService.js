@@ -11,8 +11,9 @@ async function authHeaders() {
 }
 
 async function request(url, options = {}) {
+  const { signal, ...rest } = options;
   const headers = await authHeaders();
-  const res = await fetch(url, { ...options, headers, credentials: 'include' });
+  const res = await fetch(url, { ...rest, headers, credentials: 'include', signal });
 
   if (!res.ok) {
     const body = await res.json().catch(() => ({}));
@@ -23,11 +24,12 @@ async function request(url, options = {}) {
 }
 
 const donationService = {
-  getAll(params = {}) {
+  getAll(params = {}, signal) {
+    const { signal: _ignored, ...rest } = params;
     const query = new URLSearchParams(
-      Object.fromEntries(Object.entries(params).filter(([, v]) => v != null && v !== ''))
+      Object.fromEntries(Object.entries(rest).filter(([, v]) => v != null && v !== ''))
     ).toString();
-    return request(`${BASE_URL}${query ? `?${query}` : ''}`);
+    return request(`${BASE_URL}${query ? `?${query}` : ''}`, { signal });
   },
 
   getById(id) {

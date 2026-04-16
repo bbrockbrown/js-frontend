@@ -12,6 +12,7 @@ import RequestPasswordReset from '@/pages/account/RequestPasswordReset';
 import ResetPassword from '@/pages/account/ResetPassword';
 import SignUp from '@/pages/account/SignUp';
 import DashboardPage from '@/pages/dashboard';
+import DonationsPage from '@/pages/donations';
 import Home from '@/pages/home/Home';
 import NotFound from '@/pages/not-found/NotFound';
 
@@ -26,6 +27,7 @@ export default function App() {
             <Route element={<PrivateRoute />}>
               <Route index element={<Home />} />
               <Route path='dashboard' element={<DashboardPage />} />
+              <Route path='donations' element={<DonationsPage />} />
             </Route>
             <Route element={<PublicOnlyRoute />}>
               <Route path='login' element={<Login />} />
