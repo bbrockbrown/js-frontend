@@ -3,8 +3,11 @@ import { FiArrowLeft } from 'react-icons/fi';
 
 import PantryLogo from '@/assets/icons/pantry-logo.svg';
 import { useUser } from '@/common/contexts/UserContext';
+import { addItem } from '@/common/utils/volunteerInventory';
 import { BrowserMultiFormatReader } from '@zxing/browser';
 import styled from 'styled-components';
+
+import ItemForm from './ItemForm';
 
 const PageWrapper = styled.div`
   min-height: 100vh;
@@ -142,22 +145,6 @@ const OrText = styled.span`
   letter-spacing: 0.05em;
 `;
 
-const PrimaryButton = styled.button`
-  width: 100%;
-  padding: 12px 24px;
-  background-color: #2a4d8f;
-  color: #ffffff;
-  border: none;
-  border-radius: 9999px;
-  font-size: 1rem;
-  font-weight: 600;
-  cursor: pointer;
-
-  &:hover {
-    background-color: #1e3a6e;
-  }
-`;
-
 const SecondaryButton = styled.button`
   width: 100%;
   padding: 12px 24px;
@@ -174,40 +161,57 @@ const SecondaryButton = styled.button`
   }
 `;
 
-const ResultBlock = styled.div`
+const ConfirmCard = styled.button`
   width: 100%;
-  padding: 16px;
-  background-color: #f3f6fb;
-  border: 1px solid #c7d2e3;
-  border-radius: 10px;
+  padding: 24px 16px;
+  background-color: #2a4d8f;
+  color: #ffffff;
+  border: none;
+  border-radius: 14px;
   display: flex;
   flex-direction: column;
+  align-items: center;
   gap: 6px;
+  cursor: pointer;
+  font-family: inherit;
+
+  &:hover {
+    background-color: #1e3a6e;
+  }
+`;
+
+const ConfirmHeading = styled.span`
+  font-size: 1rem;
+  font-weight: 600;
+`;
+
+const ConfirmDetail = styled.span`
+  font-size: 1.4rem;
+  font-weight: 700;
   text-align: center;
 `;
 
-const ResultLabel = styled.span`
-  font-size: 0.85rem;
-  color: #4b5563;
-`;
-
-const ResultText = styled.span`
-  font-size: 1.1rem;
-  font-weight: 700;
-  color: #1a2b4a;
-  word-break: break-all;
+const ConfirmHint = styled.span`
+  font-size: 0.75rem;
+  opacity: 0.8;
+  margin-top: 4px;
 `;
 
 export default function ScanInPage() {
   const { logout } = useUser();
   const videoRef = useRef(null);
   const controlsRef = useRef(null);
-  const [scanResult, setScanResult] = useState(null);
+
+  // view: 'camera' | 'form' | 'confirmation'
+  const [view, setView] = useState('camera');
+  const [formMode, setFormMode] = useState('scanned');
+  const [pendingBarcode, setPendingBarcode] = useState(null);
+  const [confirmation, setConfirmation] = useState(null);
   const [cameraStatus, setCameraStatus] = useState('starting');
   const [cameraError, setCameraError] = useState('');
 
   useEffect(() => {
-    if (scanResult) return undefined;
+    if (view !== 'camera') return undefined;
 
     let cancelled = false;
     let localControls = null;
@@ -224,7 +228,9 @@ export default function ScanInPage() {
             if (cancelled || !result) return;
             ctrl.stop();
             controlsRef.current = null;
-            setScanResult(result.getText());
+            setPendingBarcode(result.getText());
+            setFormMode('scanned');
+            setView('form');
           }
         );
         if (cancelled) {
@@ -297,7 +303,24 @@ export default function ScanInPage() {
         video.srcObject = null;
       }
     };
-  }, [scanResult]);
+  }, [view]);
+
+  // Auto-dismiss the confirmation card after a short delay.
+  useEffect(() => {
+    if (view !== 'confirmation') return undefined;
+    const timer = setTimeout(() => {
+      setConfirmation(null);
+      setPendingBarcode(null);
+      setView('camera');
+    }, 1500);
+    return () => clearTimeout(timer);
+  }, [view]);
+
+  const goBackToScanner = () => {
+    setPendingBarcode(null);
+    setConfirmation(null);
+    setView('camera');
+  };
 
   const handleBack = async () => {
     try {
@@ -307,46 +330,49 @@ export default function ScanInPage() {
     }
   };
 
-  const handleScanAnother = () => {
-    setScanResult(null);
+  const handleAddManually = () => {
+    setPendingBarcode(null);
+    setFormMode('manual');
+    setView('form');
   };
 
-  const handleAddManually = () => {
-    // TODO: wire up Item Scanned form in Step 3
-    console.log('Add Item(s) Manually clicked');
+  const handleFormSubmit = (data) => {
+    addItem(data);
+    setConfirmation({ count: data.quantity, name: data.name });
+    setView('confirmation');
   };
+
+  const handleConfirmationTap = () => {
+    setConfirmation(null);
+    setPendingBarcode(null);
+    setView('camera');
+  };
+
+  const showHeader = view !== 'form';
 
   return (
     <PageWrapper>
-      <BackButton
-        type='button'
-        onClick={handleBack}
-        aria-label='Log out and return to landing'
-      >
-        <FiArrowLeft size={20} />
-      </BackButton>
+      {view !== 'form' && (
+        <BackButton
+          type='button'
+          onClick={handleBack}
+          aria-label='Log out and return to landing'
+        >
+          <FiArrowLeft size={20} />
+        </BackButton>
+      )}
 
-      <LogoSection>
-        <Logo src={PantryLogo} alt='New Trier Township seal' />
-        <Title>New Trier Township Food Pantry Check-in System</Title>
-      </LogoSection>
+      {showHeader && (
+        <>
+          <LogoSection>
+            <Logo src={PantryLogo} alt='New Trier Township seal' />
+            <Title>New Trier Township Food Pantry Check-in System</Title>
+          </LogoSection>
+          <Divider />
+        </>
+      )}
 
-      <Divider />
-
-      {scanResult ? (
-        <SectionWrapper>
-          <ResultBlock>
-            <ResultLabel>Barcode detected</ResultLabel>
-            <ResultText>{scanResult}</ResultText>
-          </ResultBlock>
-          <PrimaryButton type='button' onClick={handleScanAnother}>
-            Scan another
-          </PrimaryButton>
-          <SecondaryButton type='button' onClick={handleAddManually}>
-            Add Item(s) Manually
-          </SecondaryButton>
-        </SectionWrapper>
-      ) : (
+      {view === 'camera' && (
         <SectionWrapper>
           <Instruction>Scan your item to begin</Instruction>
           <CameraFrame>
@@ -364,6 +390,31 @@ export default function ScanInPage() {
           <SecondaryButton type='button' onClick={handleAddManually}>
             Add Item(s) Manually
           </SecondaryButton>
+        </SectionWrapper>
+      )}
+
+      {view === 'form' && (
+        <ItemForm
+          mode={formMode}
+          initialBarcode={pendingBarcode}
+          onSubmit={handleFormSubmit}
+          onCancel={goBackToScanner}
+        />
+      )}
+
+      {view === 'confirmation' && confirmation && (
+        <SectionWrapper>
+          <ConfirmCard
+            type='button'
+            onClick={handleConfirmationTap}
+            aria-label='Continue scanning'
+          >
+            <ConfirmHeading>Complete!</ConfirmHeading>
+            <ConfirmDetail>
+              {confirmation.count} {confirmation.name} Added!
+            </ConfirmDetail>
+            <ConfirmHint>Tap to scan another</ConfirmHint>
+          </ConfirmCard>
         </SectionWrapper>
       )}
     </PageWrapper>
