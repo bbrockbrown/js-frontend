@@ -12,7 +12,7 @@ export const StyledForm = styled.form`
 `;
 
 export const StyledPage = styled.div`
-  flex: 1 0 0;
+  min-height: 100vh;
   display: flex;
   justify-content: center;
   align-items: center;

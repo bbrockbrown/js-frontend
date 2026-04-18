@@ -8,6 +8,8 @@ import { RedSpan } from '@/common/components/form/styles';
 import { useUser } from '@/common/contexts/UserContext';
 import styled from 'styled-components';
 
+import { StyledPage } from './styles';
+
 const SuccessMessage = styled.div`
   color: #2e7d32;
   padding: 10px;
@@ -49,33 +51,35 @@ export default function RequestPasswordReset() {
   };
 
   return (
-    <Form onSubmit={handleSubmit}>
-      <FormTitle>Reset Password</FormTitle>
-      {!success ? (
-        <>
-          {error && <RedSpan>{error}</RedSpan>}
-          <Input.Text
-            title='Email'
-            placeholder='j@example.com'
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            required
-          />
-          <SubmitButton onClick={() => {}} disabled={isLoading}>
-            {isLoading ? 'Sending...' : 'Send Reset Email'}
-          </SubmitButton>
-          <StyledLink to='/login'>Back to Login</StyledLink>
-        </>
-      ) : (
-        <>
-          <SuccessMessage>
-            Password reset instructions have been sent to your email. Please
-            check your inbox and follow the instructions. If you don&apos;t see
-            it within a few minutes, check your spam folder.
-          </SuccessMessage>
-          <StyledLink to='/login'>Back to Login</StyledLink>
-        </>
-      )}
-    </Form>
+    <StyledPage>
+      <Form onSubmit={handleSubmit}>
+        <FormTitle>Reset Password</FormTitle>
+        {!success ? (
+          <>
+            {error && <RedSpan>{error}</RedSpan>}
+            <Input.Text
+              title='Email'
+              placeholder='j@example.com'
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              required
+            />
+            <SubmitButton onClick={() => {}} disabled={isLoading}>
+              {isLoading ? 'Sending...' : 'Send Reset Email'}
+            </SubmitButton>
+            <StyledLink to='/login'>Back to Login</StyledLink>
+          </>
+        ) : (
+          <>
+            <SuccessMessage>
+              Password reset instructions have been sent to your email. Please
+              check your inbox and follow the instructions. If you don&apos;t
+              see it within a few minutes, check your spam folder.
+            </SuccessMessage>
+            <StyledLink to='/login'>Back to Login</StyledLink>
+          </>
+        )}
+      </Form>
+    </StyledPage>
   );
 }

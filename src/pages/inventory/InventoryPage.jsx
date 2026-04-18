@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { FiSearch, FiUser } from 'react-icons/fi';
 
 import PantryLogo from '@/assets/icons/image-1.svg';
@@ -10,6 +10,7 @@ import styled from 'styled-components';
 import AddCategoryModal from './AddCategoryModal';
 import CategorySection from './CategorySection';
 import ItemDetailModal from './ItemDetailModal';
+import ProfileDropdown from './ProfileDropdown';
 import SortMenu from './SortMenu';
 import TabBar from './TabBar';
 import { MOCK_CATEGORIES } from './mockData';
@@ -184,6 +185,12 @@ const ProfileButton = styled.button`
   }
 `;
 
+const ProfileWrapper = styled.div`
+  position: relative;
+  display: flex;
+  align-items: center;
+`;
+
 const Content = styled.div`
   flex: 1;
   overflow-y: auto;
@@ -198,6 +205,22 @@ export default function InventoryPage() {
   const [showSortMenu, setShowSortMenu] = useState(false);
   const [selectedItemId, setSelectedItemId] = useState(null);
   const [showAddCategory, setShowAddCategory] = useState(false);
+  const [showProfileDropdown, setShowProfileDropdown] = useState(false);
+  const profileWrapperRef = useRef(null);
+
+  useEffect(() => {
+    if (!showProfileDropdown) return undefined;
+    const handleClickOutside = (e) => {
+      if (
+        profileWrapperRef.current &&
+        !profileWrapperRef.current.contains(e.target)
+      ) {
+        setShowProfileDropdown(false);
+      }
+    };
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, [showProfileDropdown]);
 
   const foodCategories = useMemo(
     () => MOCK_CATEGORIES.filter((c) => c.parent_group === 'food'),
@@ -290,9 +313,19 @@ export default function InventoryPage() {
           <NavIcon title='Activity'>
             <HistoryIcon style={{ color: '#4e4b57' }} />
           </NavIcon>
-          <ProfileButton title='Profile'>
-            <FiUser size={24} color='#ffffff' />
-          </ProfileButton>
+          <ProfileWrapper ref={profileWrapperRef}>
+            <ProfileButton
+              title='Profile'
+              onClick={() => setShowProfileDropdown((open) => !open)}
+            >
+              <FiUser size={24} color='#ffffff' />
+            </ProfileButton>
+            {showProfileDropdown && (
+              <ProfileDropdown
+                onClose={() => setShowProfileDropdown(false)}
+              />
+            )}
+          </ProfileWrapper>
         </NavIcons>
       </TopBar>
 

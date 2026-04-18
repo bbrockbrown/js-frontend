@@ -20,7 +20,7 @@ export function OwnerOnlyRoute() {
   const { role, isLoading } = useUser();
 
   if (isLoading) return null;
-  if (role !== 'owner') return <Navigate to='/login' replace />;
+  if (role !== 'owner') return <Navigate to='/' replace />;
   return <Outlet />;
 }
 
@@ -28,7 +28,7 @@ export function AuthenticatedRoute() {
   const { role, isLoading } = useUser();
 
   if (isLoading) return null;
-  if (role === null) return <Navigate to='/login' replace />;
+  if (role === null) return <Navigate to='/' replace />;
   return <Outlet />;
 }
 
