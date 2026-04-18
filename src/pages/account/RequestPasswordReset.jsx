@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { FiArrowLeft } from 'react-icons/fi';
+import { Link, useNavigate } from 'react-router-dom';
 
 import { Form, FormTitle } from '@/common/components/form/Form';
 import { Input } from '@/common/components/form/Input';
@@ -8,7 +9,7 @@ import { RedSpan } from '@/common/components/form/styles';
 import { useUser } from '@/common/contexts/UserContext';
 import styled from 'styled-components';
 
-import { StyledPage } from './styles';
+import { BackButton, StyledPage } from './styles';
 
 const SuccessMessage = styled.div`
   color: #2e7d32;
@@ -29,6 +30,7 @@ const StyledLink = styled(Link)`
 `;
 
 export default function RequestPasswordReset() {
+  const navigate = useNavigate();
   const [email, setEmail] = useState('');
   const [error, setError] = useState('');
   const [success, setSuccess] = useState(false);
@@ -52,6 +54,13 @@ export default function RequestPasswordReset() {
 
   return (
     <StyledPage>
+      <BackButton
+        type='button'
+        onClick={() => navigate('/')}
+        aria-label='Back to landing'
+      >
+        <FiArrowLeft size={20} />
+      </BackButton>
       <Form onSubmit={handleSubmit}>
         <FormTitle>Reset Password</FormTitle>
         {!success ? (

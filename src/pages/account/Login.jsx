@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import { FiArrowLeft } from 'react-icons/fi';
 import { Link, useNavigate } from 'react-router-dom';
 
 import GoogleButton from '@/common/components/atoms/GoogleButton';
@@ -9,7 +10,7 @@ import { RedSpan } from '@/common/components/form/styles';
 import { useUser } from '@/common/contexts/UserContext';
 import styled from 'styled-components';
 
-import { StyledPage } from './styles';
+import { BackButton, StyledPage } from './styles';
 
 const StyledLink = styled(Link)`
   color: #2a4d8f;
@@ -100,6 +101,13 @@ export default function Login() {
 
   return (
     <StyledPage>
+      <BackButton
+        type='button'
+        onClick={() => navigate('/')}
+        aria-label='Back to landing'
+      >
+        <FiArrowLeft size={20} />
+      </BackButton>
       <Form onSubmit={handleSubmit}>
         <FormTitle>Log In</FormTitle>
         {error && <RedSpan>{error}</RedSpan>}
