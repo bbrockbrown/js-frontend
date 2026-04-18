@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 
 import GoogleButton from '@/common/components/atoms/GoogleButton';
@@ -37,7 +37,7 @@ function mapAuthCodeToMessage(authCode) {
 
 export default function Login() {
   const navigate = useNavigate();
-  const { login, googleAuth } = useUser();
+  const { login, googleAuth, role, isLoading: authLoading } = useUser();
   const [error, setError] = useState('');
   const [isLoading, setIsLoading] = useState(false);
 
@@ -45,6 +45,15 @@ export default function Login() {
     email: '',
     password: '',
   });
+
+  useEffect(() => {
+    if (authLoading) return;
+    if (role === 'owner') {
+      navigate('/inventory', { replace: true });
+    } else if (role === 'volunteer') {
+      navigate('/scan-in', { replace: true });
+    }
+  }, [authLoading, role, navigate]);
 
   const handleChange = (e) => {
     setFormState({ ...formState, [e.target.name]: e.target.value });
@@ -58,10 +67,9 @@ export default function Login() {
 
     try {
       await login(formState.email, formState.password);
-      navigate('/', { replace: true });
+      // Navigation handled by the role-watching useEffect above.
     } catch (error) {
       setError(mapAuthCodeToMessage(error.code));
-    } finally {
       setIsLoading(false);
     }
   };

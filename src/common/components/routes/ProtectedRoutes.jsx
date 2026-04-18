@@ -8,6 +8,11 @@ export function PrivateRoute() {
 }
 
 export function PublicOnlyRoute() {
+  const { role, isLoading } = useUser();
+
+  if (isLoading) return null;
+  if (role === 'owner') return <Navigate to='/inventory' replace />;
+  if (role === 'volunteer') return <Navigate to='/scan-in' replace />;
   return <Outlet />;
 }
 
@@ -20,10 +25,10 @@ export function OwnerOnlyRoute() {
 }
 
 export function AuthenticatedRoute() {
-  const { user, isLoading } = useUser();
+  const { role, isLoading } = useUser();
 
   if (isLoading) return null;
-  if (!user) return <Navigate to='/login' replace />;
+  if (role === null) return <Navigate to='/login' replace />;
   return <Outlet />;
 }
 

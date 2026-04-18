@@ -1,7 +1,9 @@
 import { BrowserRouter, Route, Routes } from 'react-router-dom';
 
 import {
-  PrivateRoute,
+  AuthenticatedRoute,
+  MobileOnlyRoute,
+  OwnerOnlyRoute,
   PublicOnlyRoute,
 } from '@/common/components/routes/ProtectedRoutes';
 import { UserProvider } from '@/common/contexts/UserContext';
@@ -11,9 +13,11 @@ import Login from '@/pages/account/Login';
 import RequestPasswordReset from '@/pages/account/RequestPasswordReset';
 import ResetPassword from '@/pages/account/ResetPassword';
 import SignUp from '@/pages/account/SignUp';
-import Home from '@/pages/home/Home';
 import InventoryPage from '@/pages/inventory/InventoryPage';
+import LandingPage from '@/pages/landing/LandingPage';
 import NotFound from '@/pages/not-found/NotFound';
+import ScanInPage from '@/pages/scan-in/ScanInPage';
+import VolunteerEntryPage from '@/pages/volunteer/VolunteerEntryPage';
 
 import './App.css';
 
@@ -22,13 +26,26 @@ export default function App() {
     <UserProvider>
       <BrowserRouter>
         <Routes>
-          <Route element={<PrivateRoute />}>
+          <Route path='/' element={<LandingPage />} />
+
+          <Route element={<MobileOnlyRoute />}>
+            <Route element={<PublicOnlyRoute />}>
+              <Route
+                path='volunteer/entry'
+                element={<VolunteerEntryPage />}
+              />
+            </Route>
+          </Route>
+
+          <Route element={<AuthenticatedRoute />}>
+            <Route path='scan-in' element={<ScanInPage />} />
+          </Route>
+
+          <Route element={<OwnerOnlyRoute />}>
             <Route path='inventory' element={<InventoryPage />} />
           </Route>
-          <Route path='/' element={<NavLayout />}>
-            <Route element={<PrivateRoute />}>
-              <Route index element={<Home />} />
-            </Route>
+
+          <Route element={<NavLayout />}>
             <Route element={<PublicOnlyRoute />}>
               <Route path='login' element={<Login />} />
               <Route path='signup' element={<SignUp />} />
