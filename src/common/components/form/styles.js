@@ -20,10 +20,15 @@ export const RedSpan = styled.span`
 export const StyledInput = styled.input`
   font-size: 1rem;
   padding: 8px;
-  border: solid 2px var(--text);
+  border: 1px solid #c7d2e3;
   border-radius: 8px;
   width: 100%;
   box-sizing: border-box;
+
+  &:focus {
+    outline: none;
+    border-color: #2a4d8f;
+  }
 `;
 
 export const PasswordContainer = styled.div`
