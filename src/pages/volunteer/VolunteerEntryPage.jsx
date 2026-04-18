@@ -5,7 +5,6 @@ import { useNavigate } from 'react-router-dom';
 import PantryLogo from '@/assets/icons/pantry-logo.svg';
 import { RedSpan } from '@/common/components/form/styles';
 import { useUser } from '@/common/contexts/UserContext';
-import { verifyCode } from '@/common/utils/volunteerAuth';
 import { auth } from '@/firebase-config';
 import { signInAnonymously } from 'firebase/auth';
 import styled from 'styled-components';
@@ -152,12 +151,9 @@ export default function VolunteerEntryPage() {
     e.preventDefault();
     setError('');
 
-    const result = verifyCode(code.trim());
-    if (!result.success) {
-      setError(result.error);
-      return;
-    }
+    if (!code.trim()) return;
 
+    // TODO: restore verifyCode() once backend is ready
     setIsSubmitting(true);
     try {
       await signInAnonymously(auth);
