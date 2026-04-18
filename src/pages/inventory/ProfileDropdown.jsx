@@ -33,7 +33,6 @@ const CodeDisplay = styled.div`
   border: 1px solid #c7d2e3;
   border-radius: 8px;
   padding: 14px 10px;
-  font-family: 'Courier New', Courier, monospace;
   font-size: 1.5rem;
   font-weight: 700;
   color: #1a2b4a;

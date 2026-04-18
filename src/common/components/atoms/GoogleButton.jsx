@@ -35,7 +35,7 @@ const StyledButton = styled.button`
 
 const Divider = styled.div`
   position: relative;
-  margin: 24px 0;
+  margin: 4px 0;
   text-align: center;
 
   &::before {

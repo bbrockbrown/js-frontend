@@ -12,11 +12,27 @@ import styled from 'styled-components';
 import { StyledPage } from './styles';
 
 const StyledLink = styled(Link)`
-  color: #007bff;
+  color: #2a4d8f;
   text-decoration: none;
   font-size: 0.9rem;
   margin-top: -10px;
   align-self: flex-end;
+
+  &:hover {
+    text-decoration: underline;
+  }
+`;
+
+const SignUpPrompt = styled.span`
+  font-size: 0.9rem;
+  color: #1a2b4a;
+  text-align: center;
+`;
+
+const SignUpLink = styled(Link)`
+  color: #2a4d8f;
+  text-decoration: none;
+  font-weight: 600;
 
   &:hover {
     text-decoration: underline;
@@ -90,7 +106,6 @@ export default function Login() {
         <Input.Text
           title='Email'
           name='email'
-          placeholder='jsmith or j@example.com'
           value={formState.email}
           onChange={handleChange}
           required
@@ -111,6 +126,10 @@ export default function Login() {
           isLoading={isLoading}
           text='Sign in with Google'
         />
+        <SignUpPrompt>
+          Don&apos;t have an account?{' '}
+          <SignUpLink to='/signup'>Sign up</SignUpLink>
+        </SignUpPrompt>
       </Form>
     </StyledPage>
   );

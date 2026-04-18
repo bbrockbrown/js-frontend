@@ -19,7 +19,7 @@ const SuccessMessage = styled.div`
 `;
 
 const StyledLink = styled(Link)`
-  color: #007bff;
+  color: #2a4d8f;
   text-decoration: none;
   font-size: 0.9rem;
 
