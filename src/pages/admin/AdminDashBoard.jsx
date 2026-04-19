@@ -2,7 +2,7 @@ import React from 'react';
 
 import PageHeader from '@/common/components/atoms/PageHeader';
 import { BodyContainer } from '@/common/components/form/styles';
-
+import RecentVolunteer from '@/common/components/dashboard/RecentVolunteer';
 import Stats from '../../common/components/dashboard/Stats';
 import UpcomingEvents from '@/common/components/dashboard/UpcomingEvents';
 const AdminDashBoard = () => {
@@ -13,6 +13,43 @@ const AdminDashBoard = () => {
     justifyContent: 'center',
     width: '100%',
   };
+  const statsContainerStyle = {
+    display: 'flex',
+    flexDirection: 'row',
+    justifyContent: 'space-evenly',
+    width: '100%',
+  };
+  const styleEventsTitle = {
+    marginBottom: '0px',
+  }
+  const eventsContainerStyle = {
+    display: 'flex',
+    flexDirection: 'column',
+    width: '50%',
+    marginLeft: '40px',
+    backgroundColor: '#fff',
+    padding: '10px 20px',
+    borderRadius: '15px',
+    boxShadow: '0px 1px 2px lightgray',
+    gap: '20px',
+  }
+  const volunteerContainerStyle = {
+    display: 'flex',
+    flexDirection: 'column',
+    width: '30%',
+    height: 'auto',
+    backgroundColor: '#fff',
+    padding: '10px 20px',
+    borderRadius: '15px',
+    boxShadow: '0px 1px 2px lightgray',
+    marginRight: '50px',
+  }
+  const eventsVolunteerContainerStyle = {
+    display: 'flex',
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    width: '100%',
+  }
   return (
     <div style={styleBody}>
       <PageHeader title='Dashboard' />

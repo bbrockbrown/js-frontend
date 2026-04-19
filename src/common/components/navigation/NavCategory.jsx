@@ -16,7 +16,7 @@ const icons = {
   Acknowledgements: AcknowledgementsIcon,
 };
 
-const NavCategory = ({ name, icon, toggle }) => {
+const NavCategory = ({ name, icon, toggle, onClick }) => {
   const iconStyle = {
     width: '20px',
     height: '20px',
@@ -24,7 +24,7 @@ const NavCategory = ({ name, icon, toggle }) => {
   };
 
   return (
-    <Button.Nav>
+    <Button.Nav onClick={onClick}>
       {toggle ? (
         <>
           <img src={icons[icon]} alt={name} style={iconStyle} />
