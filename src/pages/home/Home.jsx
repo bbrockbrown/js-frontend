@@ -355,7 +355,7 @@ export default function Home() {
             <LoginIcon src={loginIcon} alt='' aria-hidden='true' />
           </FooterLogoutButton>
         ) : (
-          <FooterLoginLink to='/login'>
+          <FooterLoginLink to='/signup'>
             <span>RSAE</span> Admin Login
             <LoginIcon src={loginIcon} alt='' aria-hidden='true' />
           </FooterLoginLink>
