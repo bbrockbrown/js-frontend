@@ -1,6 +1,5 @@
-import styled from 'styled-components';
-
 import { Button } from '@/common/components/atoms/Button';
+import styled from 'styled-components';
 
 export const InputContainer = styled.div``;
 
@@ -10,6 +9,8 @@ export const InputName = styled.h3`
   font-weight: normal;
   font-size: 1rem;
   margin-bottom: 4px;
+  color: #a3a3a3;
+  font-weight: bold;
 `;
 export const InputTitle = styled.span`
   margin-right: 2px;
@@ -21,10 +22,13 @@ export const RedSpan = styled.span`
 export const StyledInput = styled.input`
   font-size: 1rem;
   padding: 8px;
-  border: solid 2px var(--text);
+  border: none;
+  background: #d3d3d326;
   border-radius: 8px;
   width: 100%;
   box-sizing: border-box;
+  color: #00000050;
+  font-weight: bold;
 `;
 
 export const PasswordContainer = styled.div`
@@ -46,4 +50,10 @@ export const StyledButton = styled(Button.Primary)`
   margin-top: 20px;
   margin-left: auto;
   margin-right: auto;
+`;
+
+export const BodyContainer = styled.div`
+  background-color: #f8f8f8;
+  width: 100%;
+  height: 100%;
 `;
