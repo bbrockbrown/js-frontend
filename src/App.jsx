@@ -8,11 +8,15 @@ import { UserProvider } from '@/common/contexts/UserContext';
 import NavLayout from '@/common/layouts/NavLayout';
 import AuthCallback from '@/pages/account/AuthCallback';
 import Login from '@/pages/account/Login';
+import SignUpLinks from '@/pages/account/SignUpLinks';
 import RequestPasswordReset from '@/pages/account/RequestPasswordReset';
 import ResetPassword from '@/pages/account/ResetPassword';
 import SignUp from '@/pages/account/SignUp';
 import Home from '@/pages/home/Home';
+import Contacts from '@/pages/contacts/Contacts';
 import NotFound from '@/pages/not-found/NotFound';
+import Dashboard from './pages/dashboard/Dashboard';
+import DraftTemplates from './pages/Templates/DraftTemplates';
 
 import './App.css';
 
@@ -24,6 +28,10 @@ export default function App() {
           <Route path='/' element={<NavLayout />}>
             <Route element={<PrivateRoute />}>
               <Route index element={<Home />} />
+              <Route path='signuplinks' element={<SignUpLinks/>} />
+              <Route path='contacts' element={<Contacts />} />
+              <Route path='dashboard' element={<Dashboard />} />
+              <Route path='templates' element={<DraftTemplates/>} />
             </Route>
             <Route element={<PublicOnlyRoute />}>
               <Route path='login' element={<Login />} />
