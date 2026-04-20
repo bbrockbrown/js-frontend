@@ -10,7 +10,7 @@
 import NavItem from '@/common/components/atoms/NavItem';
 import UserProfile from '@/common/components/molecules/UserProfile';
 import { useUser } from '@/common/contexts/UserContext';
-import { DollarSign, LayoutDashboard, Users } from 'lucide-react';
+import { DollarSign, LayoutDashboard, ShieldCheck, Users } from 'lucide-react';
 import PropTypes from 'prop-types';
 import { useNavigate } from 'react-router-dom';
 
@@ -18,6 +18,7 @@ const NAV_ITEMS = [
   { label: 'Dashboard', icon: LayoutDashboard, id: 'dashboard' },
   { label: 'Donations', icon: DollarSign, id: 'donations' },
   { label: 'Donors', icon: Users, id: 'donors' },
+  { label: 'Admin', icon: ShieldCheck, id: 'admin' },
 ];
 
 const styles = {

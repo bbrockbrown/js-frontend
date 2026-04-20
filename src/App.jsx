@@ -11,6 +11,7 @@ import Login from '@/pages/account/Login';
 import RequestPasswordReset from '@/pages/account/RequestPasswordReset';
 import ResetPassword from '@/pages/account/ResetPassword';
 import SignUp from '@/pages/account/SignUp';
+import AdminPage from '@/pages/admin';
 import DashboardPage from '@/pages/dashboard';
 import DonationsPage from '@/pages/donations';
 import Home from '@/pages/home/Home';
@@ -28,6 +29,7 @@ export default function App() {
               <Route index element={<Home />} />
               <Route path='dashboard' element={<DashboardPage />} />
               <Route path='donations' element={<DonationsPage />} />
+              <Route path='admin' element={<AdminPage />} />
             </Route>
             <Route element={<PublicOnlyRoute />}>
               <Route path='login' element={<Login />} />
