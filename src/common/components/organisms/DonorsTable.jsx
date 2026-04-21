@@ -1,14 +1,11 @@
 import { useEffect, useRef, useState } from 'react';
-import { Link } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 
 import Badge from '@/common/components/atoms/Badge';
 import { formatAmount, formatDate } from '@/utils/format';
 import PropTypes from 'prop-types';
 
-const donorLinkStyle = {
-  color: '#1a1a1a',
-  textDecoration: 'none',
-};
+const clickableRowStyle = { cursor: 'pointer' };
 
 /* ── styles ─────────────────────────────────────────── */
 
@@ -170,6 +167,7 @@ export default function DonorTable({
   onEdit,
   onDelete,
 }) {
+  const navigate = useNavigate();
   const allChecked =
     donors.length > 0 && donors.every((d) => selected.has(d.id));
   const someChecked = donors.some((d) => selected.has(d.id));
@@ -213,8 +211,12 @@ export default function DonorTable({
           </tr>
         ) : (
           donors.map((d) => (
-            <tr key={d.id}>
-              <td style={checkboxTd}>
+            <tr
+              key={d.id}
+              style={clickableRowStyle}
+              onClick={() => navigate(`/donors/${d.id}`)}
+            >
+              <td style={checkboxTd} onClick={(e) => e.stopPropagation()}>
                 <input
                   type='checkbox'
                   checked={selected.has(d.id)}
@@ -222,9 +224,7 @@ export default function DonorTable({
                 />
               </td>
               <td style={{ ...tdStyle, fontWeight: '500', color: '#1a1a1a' }}>
-                <Link to={`/donors/${d.id}`} style={donorLinkStyle}>
-                  {d.name}
-                </Link>
+                {d.name}
               </td>
               <td style={tdStyle}>{d.email}</td>
               <td style={tdStyle}>{addressCell(d)}</td>
@@ -232,7 +232,7 @@ export default function DonorTable({
               <td style={tdStyle}>{formatAmount(d.total_donations)}</td>
               <td style={tdStyle}>{d.donation_count}</td>
               <td style={tdStyle}>{formatDate(d.most_recent)}</td>
-              <td style={tdStyle}>
+              <td style={tdStyle} onClick={(e) => e.stopPropagation()}>
                 <ActionsMenu
                   onEdit={() => onEdit(d)}
                   onDelete={() => onDelete(d)}
