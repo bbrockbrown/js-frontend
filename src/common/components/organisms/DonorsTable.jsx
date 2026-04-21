@@ -1,9 +1,11 @@
-
 import { useEffect, useRef, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 
 import Badge from '@/common/components/atoms/Badge';
 import { formatAmount, formatDate } from '@/utils/format';
 import PropTypes from 'prop-types';
+
+const clickableRowStyle = { cursor: 'pointer' };
 
 /* ── styles ─────────────────────────────────────────── */
 
@@ -102,12 +104,27 @@ function ActionsMenu({ onEdit, onDelete }) {
       </button>
       {open && (
         <>
-          <div style={{ position: 'fixed', inset: 0, zIndex: 9 }} onClick={close} />
+          <div
+            style={{ position: 'fixed', inset: 0, zIndex: 9 }}
+            onClick={close}
+          />
           <div style={menuStyle}>
-            <button style={menuItem} onClick={() => { close(); onEdit(); }}>
+            <button
+              style={menuItem}
+              onClick={() => {
+                close();
+                onEdit();
+              }}
+            >
               Edit
             </button>
-            <button style={menuItemDanger} onClick={() => { close(); onDelete(); }}>
+            <button
+              style={menuItemDanger}
+              onClick={() => {
+                close();
+                onDelete();
+              }}
+            >
               Delete
             </button>
           </div>
@@ -124,11 +141,20 @@ ActionsMenu.propTypes = {
 
 /* ── DonorTable ───────────────────────────────────── */
 
-const COLUMNS = ['Name', 'Email', 'Address', 'Phone', 'Total Donations', 'Donation Count', 'Most Recent', 'Actions'];
+const COLUMNS = [
+  'Name',
+  'Email',
+  'Address',
+  'Phone',
+  'Total Donations',
+  'Donation Count',
+  'Most Recent',
+  'Actions',
+];
 
 function addressCell(d) {
-    if (d.address != null && String(d.address).trim()) return d.address;
-    return '—';
+  if (d.address != null && String(d.address).trim()) return d.address;
+  return '—';
 }
 
 export default function DonorTable({
@@ -141,7 +167,9 @@ export default function DonorTable({
   onEdit,
   onDelete,
 }) {
-  const allChecked = donors.length > 0 && donors.every((d) => selected.has(d.id));
+  const navigate = useNavigate();
+  const allChecked =
+    donors.length > 0 && donors.every((d) => selected.has(d.id));
   const someChecked = donors.some((d) => selected.has(d.id));
 
   const selectAllRef = useRef(null);
@@ -152,7 +180,8 @@ export default function DonorTable({
   }, [someChecked, allChecked]);
 
   if (loading) return <div style={statusMsg}>Loading donors…</div>;
-  if (error) return <div style={{ ...statusMsg, color: '#dc2626' }}>Error: {error}</div>;
+  if (error)
+    return <div style={{ ...statusMsg, color: '#dc2626' }}>Error: {error}</div>;
 
   return (
     <table style={tableStyle}>
@@ -182,8 +211,12 @@ export default function DonorTable({
           </tr>
         ) : (
           donors.map((d) => (
-            <tr key={d.id}>
-              <td style={checkboxTd}>
+            <tr
+              key={d.id}
+              style={clickableRowStyle}
+              onClick={() => navigate(`/donors/${d.id}`)}
+            >
+              <td style={checkboxTd} onClick={(e) => e.stopPropagation()}>
                 <input
                   type='checkbox'
                   checked={selected.has(d.id)}
@@ -199,8 +232,11 @@ export default function DonorTable({
               <td style={tdStyle}>{formatAmount(d.total_donations)}</td>
               <td style={tdStyle}>{d.donation_count}</td>
               <td style={tdStyle}>{formatDate(d.most_recent)}</td>
-              <td style={tdStyle}>
-                <ActionsMenu onEdit={() => onEdit(d)} onDelete={() => onDelete(d)} />
+              <td style={tdStyle} onClick={(e) => e.stopPropagation()}>
+                <ActionsMenu
+                  onEdit={() => onEdit(d)}
+                  onDelete={() => onDelete(d)}
+                />
               </td>
             </tr>
           ))

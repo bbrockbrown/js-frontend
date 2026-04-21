@@ -15,6 +15,7 @@ import AdminPage from '@/pages/admin';
 import DashboardPage from '@/pages/dashboard';
 import DonationsPage from '@/pages/donations';
 import DonorsPage from '@/pages/donors';
+import DonorDetailsPage from '@/pages/donors/Details';
 import Home from '@/pages/home/Home';
 import NotFound from '@/pages/not-found/NotFound';
 
@@ -32,6 +33,7 @@ export default function App() {
               <Route path='donations' element={<DonationsPage />} />
               <Route path='donors' element={<DonorsPage />} />
               <Route path='admin' element={<AdminPage />} />
+              <Route path='donors/:id' element={<DonorDetailsPage />} />
             </Route>
             <Route element={<PublicOnlyRoute />}>
               <Route path='login' element={<Login />} />
