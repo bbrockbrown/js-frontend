@@ -10,6 +10,7 @@
 */
 import { useEffect, useState } from 'react';
 
+import donationService from '@/services/donationService';
 import { Send } from 'lucide-react';
 import { PropTypes } from 'prop-types';
 
@@ -184,6 +185,8 @@ const EMPTY = {
   amount: '',
   donation_date: '',
   receipt_status: 'pending',
+  phone: '',
+  address: '',
 };
 
 function fromDonationRow(d) {
@@ -194,6 +197,8 @@ function fromDonationRow(d) {
     amount: d.amount ?? '',
     donation_date: d.donation_date?.slice(0, 10) ?? '',
     receipt_status: d.receipt_status ?? 'pending',
+    phone: '',
+    address: '',
   };
 }
 
@@ -222,6 +227,16 @@ export default function DonationViewModal({
     setConfirmDelete(false);
     setDeleting(false);
 
+    donationService
+      .getById(donation.id)
+      .then((detail) => {
+        setForm((prev) => ({
+          ...prev,
+          phone: detail.phone ?? '',
+          address: detail.address ?? '',
+        }));
+      })
+      .catch((err) => console.error('[DonationViewModal] detail fetch failed:', err));
   }, [open, donation?.id]);
 
   if (!open) return null;
@@ -325,7 +340,7 @@ export default function DonationViewModal({
               />
             </div>
 
-            <div style={fieldGroupLast}>
+            <div style={fieldGroup}>
               <label style={labelStyle}>Email</label>
               <input
                 style={inputStyle}
@@ -333,6 +348,26 @@ export default function DonationViewModal({
                 value={form.donor_email}
                 onChange={set('donor_email')}
                 required
+              />
+            </div>
+
+            <div style={fieldGroup}>
+              <label style={labelStyle}>Phone</label>
+              <input
+                style={{ ...inputStyle, background: '#f3f4f6', color: '#6b7280' }}
+                value={form.phone}
+                readOnly
+                placeholder='—'
+              />
+            </div>
+
+            <div style={fieldGroupLast}>
+              <label style={labelStyle}>Address</label>
+              <input
+                style={{ ...inputStyle, background: '#f3f4f6', color: '#6b7280' }}
+                value={form.address}
+                readOnly
+                placeholder='—'
               />
             </div>
           </div>
