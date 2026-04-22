@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 
-import { PropTypes } from 'prop-types';
 import { Send } from 'lucide-react';
+import { PropTypes } from 'prop-types';
 
 const overlay = {
   position: 'fixed',
@@ -116,7 +116,14 @@ const sendBtn = {
   color: '#fff',
 };
 
-export default function EmailPreviewModal({ open, to, subject, body, onClose, onConfirm }) {
+export default function EmailPreviewModal({
+  open,
+  to,
+  subject,
+  body,
+  onClose,
+  onConfirm,
+}) {
   const [editedBody, setEditedBody] = useState(body);
 
   useEffect(() => {
@@ -134,7 +141,9 @@ export default function EmailPreviewModal({ open, to, subject, body, onClose, on
       <div style={modal} onClick={(e) => e.stopPropagation()}>
         <div style={headerRow}>
           <div style={titleStyle}>Preview Email</div>
-          <button type='button' style={closeBtn} onClick={onClose}>×</button>
+          <button type='button' style={closeBtn} onClick={onClose}>
+            ×
+          </button>
         </div>
 
         <div style={fieldGroup}>
@@ -157,7 +166,9 @@ export default function EmailPreviewModal({ open, to, subject, body, onClose, on
         </div>
 
         <div style={footerRow}>
-          <button type='button' style={cancelBtn} onClick={onClose}>Cancel</button>
+          <button type='button' style={cancelBtn} onClick={onClose}>
+            Cancel
+          </button>
           <button type='button' style={sendBtn} onClick={handleConfirm}>
             <Send size={13} /> Open in Mail
           </button>

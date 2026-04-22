@@ -163,7 +163,10 @@ export default function RecentDonations() {
     setLoading(true);
     setError(null);
     try {
-      const res = await fetch(`${import.meta.env.VITE_BACKEND_URL}/dashboard/recent-donations`, { credentials: 'include' });
+      const res = await fetch(
+        `${import.meta.env.VITE_BACKEND_URL}/dashboard/recent-donations`,
+        { credentials: 'include' }
+      );
       if (!res.ok) throw new Error(`Request failed (${res.status})`);
       setDonations(await res.json());
     } catch (err) {
@@ -173,7 +176,9 @@ export default function RecentDonations() {
     }
   }, []);
 
-  useEffect(() => { fetchRecent(); }, [fetchRecent]);
+  useEffect(() => {
+    fetchRecent();
+  }, [fetchRecent]);
 
   const openCreate = () => {
     setEditing(null);
@@ -210,7 +215,9 @@ export default function RecentDonations() {
         </div>
 
         {loading && <div style={statusMsg}>Loading donations…</div>}
-        {error && <div style={{ ...statusMsg, color: '#dc2626' }}>Error: {error}</div>}
+        {error && (
+          <div style={{ ...statusMsg, color: '#dc2626' }}>Error: {error}</div>
+        )}
 
         {!loading && !error && (
           <table style={tableStyle}>
@@ -233,7 +240,13 @@ export default function RecentDonations() {
               ) : (
                 donations.map((d) => (
                   <tr key={d.id}>
-                    <td style={{ ...tdStyle, fontWeight: '500', color: '#1a1a1a' }}>
+                    <td
+                      style={{
+                        ...tdStyle,
+                        fontWeight: '500',
+                        color: '#1a1a1a',
+                      }}
+                    >
                       {d.donor_name}
                     </td>
                     <td style={tdStyle}>{formatAmount(d.amount)}</td>

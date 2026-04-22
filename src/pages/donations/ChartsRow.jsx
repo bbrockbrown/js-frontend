@@ -1,7 +1,9 @@
+import { useEffect, useState } from 'react';
+
 import Card from '@/common/components/atoms/Card';
 import SectionTitle from '@/common/components/atoms/SectionTitle';
+import { auth } from '@/firebase-config';
 import PropTypes from 'prop-types';
-import { useEffect, useState } from 'react';
 import {
   Bar,
   BarChart,
@@ -46,7 +48,9 @@ function CustomTooltip({ active, payload, label }) {
     return (
       <div style={tooltipStyle}>
         <div style={tooltipLabelStyle}>{label}</div>
-        <div style={tooltipValueStyle}>${Number(payload[0].value).toLocaleString()}</div>
+        <div style={tooltipValueStyle}>
+          ${Number(payload[0].value).toLocaleString()}
+        </div>
       </div>
     );
   }
@@ -68,22 +72,52 @@ CustomTooltip.defaultProps = {
 export default function ChartsRow() {
   const [trendData, setTrendData] = useState([]);
   const [monthlyData, setMonthlyData] = useState([]);
+  const [error, setError] = useState(null);
 
   useEffect(() => {
-    fetch(`${import.meta.env.VITE_BACKEND_URL}/dashboard/trend`, {
-      credentials: 'include',
-    })
-      .then((res) => res.json())
-      .then((data) => setTrendData(data))
-      .catch((err) => console.error('Failed to fetch trend data:', err));
+    async function fetchCharts() {
+      try {
+        const token = await auth.currentUser?.getIdToken();
+        const headers = {
+          ...(token && { Authorization: `Bearer ${token}` }),
+        };
 
-    fetch(`${import.meta.env.VITE_BACKEND_URL}/dashboard/last6months`, {
-      credentials: 'include',
-    })
-      .then((res) => res.json())
-      .then((data) => setMonthlyData(data))
-      .catch((err) => console.error('Failed to fetch monthly data:', err));
+        const [trendRes, monthlyRes] = await Promise.all([
+          fetch(`${import.meta.env.VITE_BACKEND_URL}/dashboard/trend`, {
+            credentials: 'include',
+            headers,
+          }),
+          fetch(`${import.meta.env.VITE_BACKEND_URL}/dashboard/last6months`, {
+            credentials: 'include',
+            headers,
+          }),
+        ]);
+
+        if (!trendRes.ok || !monthlyRes.ok) {
+          throw new Error('Failed to load chart data');
+        }
+
+        const [trend, monthly] = await Promise.all([trendRes.json(), monthlyRes.json()]);
+        setTrendData(trend);
+        setMonthlyData(monthly);
+      } catch (err) {
+        console.error('[ChartsRow] fetch failed:', err);
+        setError('Could not load chart data.');
+      }
+    }
+
+    fetchCharts();
   }, []);
+
+  if (error) {
+    return (
+      <div style={rowStyle}>
+        <Card style={{ flex: 1, padding: '22px', color: '#ef4444', fontSize: '14px' }}>
+          {error}
+        </Card>
+      </div>
+    );
+  }
 
   return (
     <div style={rowStyle}>

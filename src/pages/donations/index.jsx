@@ -52,7 +52,12 @@ const styles = {
   },
 };
 
-const INITIAL_FILTERS = { search: '', status: '', minAmount: '', maxAmount: '' };
+const INITIAL_FILTERS = {
+  search: '',
+  status: '',
+  minAmount: '',
+  maxAmount: '',
+};
 
 /* ── component ───────────────────────────────────────── */
 
@@ -63,12 +68,24 @@ export default function DonationsPage() {
   const [modalOpen, setModalOpen] = useState(false);
   const [viewing, setViewing] = useState(null);
 
-  const { donations, total, totalPages, loading, error, onPageResetRef, createDonation, updateDonation, deleteDonation } =
-    useDonations({ ...filters, page });
+  const {
+    donations,
+    total,
+    totalPages,
+    loading,
+    error,
+    onPageResetRef,
+    createDonation,
+    updateDonation,
+    deleteDonation,
+  } = useDonations({ ...filters, page });
 
   // Give the hook a way to reset the page to 1 after create/delete
   useEffect(() => {
-    onPageResetRef.current = () => { setPage(1); setSelected(new Set()); };
+    onPageResetRef.current = () => {
+      setPage(1);
+      setSelected(new Set());
+    };
   });
 
   // Reset to page 1 whenever a filter value changes
@@ -105,13 +122,14 @@ export default function DonationsPage() {
     setViewing(null);
   };
 
-
   return (
     <main style={styles.main}>
       <div style={styles.topRow}>
         <div>
           <div style={styles.title}>Donations</div>
-          <div style={styles.subtitle}>View and manage all donation records.</div>
+          <div style={styles.subtitle}>
+            View and manage all donation records.
+          </div>
         </div>
         <button style={styles.addBtn} onClick={openCreate}>
           <Plus size={14} /> Add Donation

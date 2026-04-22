@@ -9,8 +9,7 @@
     selected      – Set<id>  (controlled by parent)
     onSelectChange – (id) => void   toggles one row
     onSelectAll    – (bool) => void  select / deselect all visible rows
-    onEdit        – (donation) => void
-    onDelete      – (donation) => void
+    onRowClick    – (donation) => void
 */
 import { useEffect, useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
@@ -61,26 +60,6 @@ const statusMsg = {
   color: '#6b7280',
 };
 
-
-
-<<<<<<< HEAD
-const menuItem = {
-  display: 'block',
-  width: '100%',
-  padding: '8px 14px',
-  fontSize: '13px',
-  color: '#374151',
-  background: 'none',
-  border: 'none',
-  textAlign: 'left',
-  cursor: 'pointer',
-};
-
-const menuItemDanger = {
-  ...menuItem,
-  color: '#dc2626',
-};
-
 const donorLinkStyle = {
   color: '#1a1a1a',
   textDecoration: 'none',
@@ -88,55 +67,17 @@ const donorLinkStyle = {
   transition: 'border-color 0.15s',
 };
 
-/* ── ActionsMenu ─────────────────────────────────────── */
-
-function ActionsMenu({ onEdit, onDelete }) {
-  const [open, setOpen] = useState(false);
-  const close = () => setOpen(false);
-=======
 /* ── DonationRow ─────────────────────────────────────── */
->>>>>>> 628b466 (Added donation details to each donation)
 
 function DonationRow({ d, selected, onSelectChange, onRowClick }) {
   const [hovered, setHovered] = useState(false);
   return (
-<<<<<<< HEAD
-    <span style={{ position: 'relative' }}>
-      <button style={actionsBtnStyle} onClick={() => setOpen((v) => !v)}>
-        ···
-      </button>
-      {open && (
-        <>
-          <div
-            style={{ position: 'fixed', inset: 0, zIndex: 9 }}
-            onClick={close}
-          />
-          <div style={menuStyle}>
-            <button
-              style={menuItem}
-              onClick={() => {
-                close();
-                onEdit();
-              }}
-            >
-              Edit
-            </button>
-            <button
-              style={menuItemDanger}
-              onClick={() => {
-                close();
-                onDelete();
-              }}
-            >
-              Delete
-            </button>
-          </div>
-        </>
-      )}
-    </span>
-=======
     <tr
-      style={{ cursor: 'pointer', background: hovered ? '#f5f5f3' : 'transparent', transition: 'background 0.1s' }}
+      style={{
+        cursor: 'pointer',
+        background: hovered ? '#f5f5f3' : 'transparent',
+        transition: 'background 0.1s',
+      }}
       onClick={() => onRowClick(d)}
       onMouseEnter={() => setHovered(true)}
       onMouseLeave={() => setHovered(false)}
@@ -148,13 +89,26 @@ function DonationRow({ d, selected, onSelectChange, onRowClick }) {
           onChange={() => onSelectChange(d.id)}
         />
       </td>
-      <td style={{ ...tdStyle, fontWeight: '500', color: '#1a1a1a' }}>{d.donor_name}</td>
+      <td style={{ ...tdStyle, fontWeight: '500', color: '#1a1a1a' }}>
+        {d.donor_id ? (
+          <Link
+            to={`/donors/${d.donor_id}`}
+            style={donorLinkStyle}
+            onClick={(e) => e.stopPropagation()}
+          >
+            {d.donor_name}
+          </Link>
+        ) : (
+          d.donor_name
+        )}
+      </td>
       <td style={tdStyle}>{d.donor_email}</td>
       <td style={tdStyle}>{formatAmount(d.amount)}</td>
       <td style={tdStyle}>{formatDate(d.donation_date)}</td>
-      <td style={tdStyle}><Badge status={d.receipt_status} /></td>
+      <td style={tdStyle}>
+        <Badge status={d.receipt_status} />
+      </td>
     </tr>
->>>>>>> 628b466 (Added donation details to each donation)
   );
 }
 
@@ -167,18 +121,7 @@ DonationRow.propTypes = {
 
 /* ── DonationTable ───────────────────────────────────── */
 
-<<<<<<< HEAD
-const COLUMNS = [
-  'Donor Name',
-  'Email',
-  'Amount',
-  'Date',
-  'Receipt Status',
-  'Actions',
-];
-=======
 const COLUMNS = ['Donor Name', 'Email', 'Amount', 'Date', 'Receipt Status'];
->>>>>>> 628b466 (Added donation details to each donation)
 
 export default function DonationTable({
   donations,
@@ -232,38 +175,6 @@ export default function DonationTable({
           </tr>
         ) : (
           donations.map((d) => (
-<<<<<<< HEAD
-            <tr key={d.id}>
-              <td style={checkboxTd}>
-                <input
-                  type='checkbox'
-                  checked={selected.has(d.id)}
-                  onChange={() => onSelectChange(d.id)}
-                />
-              </td>
-              <td style={{ ...tdStyle, fontWeight: '500', color: '#1a1a1a' }}>
-                {d.donor_id ? (
-                  <Link to={`/donors/${d.donor_id}`} style={donorLinkStyle}>
-                    {d.donor_name}
-                  </Link>
-                ) : (
-                  d.donor_name
-                )}
-              </td>
-              <td style={tdStyle}>{d.donor_email}</td>
-              <td style={tdStyle}>{formatAmount(d.amount)}</td>
-              <td style={tdStyle}>{formatDate(d.donation_date)}</td>
-              <td style={tdStyle}>
-                <Badge status={d.receipt_status} />
-              </td>
-              <td style={tdStyle}>
-                <ActionsMenu
-                  onEdit={() => onEdit(d)}
-                  onDelete={() => onDelete(d)}
-                />
-              </td>
-            </tr>
-=======
             <DonationRow
               key={d.id}
               d={d}
@@ -271,7 +182,6 @@ export default function DonationTable({
               onSelectChange={onSelectChange}
               onRowClick={onRowClick}
             />
->>>>>>> 628b466 (Added donation details to each donation)
           ))
         )}
       </tbody>
