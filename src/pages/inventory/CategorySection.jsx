@@ -1,9 +1,10 @@
-import { useState } from 'react';
-import { FiFilter, FiLock, FiMinusCircle, FiPlusCircle } from 'react-icons/fi';
+import { useRef, useState } from 'react';
+import { FiFilter, FiLock, FiMinusCircle, FiPlus, FiPlusCircle } from 'react-icons/fi';
 
 import PropTypes from 'prop-types';
 import styled from 'styled-components';
 
+import { itemsApi } from '../../services/api';
 import ItemRow from './ItemRow';
 
 const Wrapper = styled.div`
@@ -84,8 +85,101 @@ const EmptyMessage = styled.div`
   background: #d3deec;
 `;
 
-export default function CategorySection({ category, onItemClick }) {
+const AddItemRow = styled.div`
+  display: flex;
+  align-items: center;
+  border-top: 1px solid #d8e1ee;
+  background: #f8fafc;
+  min-height: 36px;
+`;
+
+const AddItemButton = styled.button`
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 13px;
+  color: #2c5e95;
+  background: none;
+  border: none;
+  padding: 8px 12px;
+  cursor: pointer;
+  font-weight: 500;
+  &:hover { background: #eef3fa; }
+`;
+
+const AddItemInput = styled.input`
+  flex: 1;
+  border: none;
+  border-right: 1px solid #d8e1ee;
+  background: transparent;
+  font-size: 14px;
+  color: #1a2b4a;
+  padding: 8px 12px;
+  outline: none;
+  &::placeholder { color: #9ba8bc; }
+`;
+
+const AddItemSave = styled.button`
+  padding: 8px 14px;
+  font-size: 13px;
+  font-weight: 600;
+  color: #2c5e95;
+  background: none;
+  border: none;
+  cursor: pointer;
+  &:hover { background: #eef3fa; }
+  &:disabled { color: #9ba8bc; cursor: default; }
+`;
+
+const AddItemCancel = styled.button`
+  padding: 8px 10px;
+  font-size: 13px;
+  color: #6b7b95;
+  background: none;
+  border: none;
+  cursor: pointer;
+  &:hover { background: #f0f3f8; }
+`;
+
+export default function CategorySection({ category, onItemClick, onItemAdded }) {
   const [isOpen, setIsOpen] = useState(true);
+  const [addingItem, setAddingItem] = useState(false);
+  const [newItemName, setNewItemName] = useState('');
+  const [saving, setSaving] = useState(false);
+  const inputRef = useRef(null);
+
+  const startAdding = () => {
+    setAddingItem(true);
+    setNewItemName('');
+    // Focus after render
+    setTimeout(() => inputRef.current?.focus(), 0);
+  };
+
+  const cancelAdding = () => {
+    setAddingItem(false);
+    setNewItemName('');
+  };
+
+  const handleSave = async () => {
+    const name = newItemName.trim();
+    if (!name || saving) return;
+
+    setSaving(true);
+    try {
+      const newItem = await itemsApi.create({
+        name,
+        category_id: category.id,
+        low_stock_threshold: 20,
+      });
+      onItemAdded?.(newItem);
+      setAddingItem(false);
+      setNewItemName('');
+    } catch (err) {
+      console.error('Add item error:', err);
+    } finally {
+      setSaving(false);
+    }
+  };
 
   return (
     <Wrapper>
@@ -103,8 +197,9 @@ export default function CategorySection({ category, onItemClick }) {
           {isOpen ? <FiMinusCircle size={19} /> : <FiPlusCircle size={19} />}
         </CollapseButton>
       </Header>
+
       <ItemList $isOpen={isOpen}>
-        {category.items.length === 0 ? (
+        {category.items.length === 0 && !addingItem ? (
           <EmptyMessage>No items in this category</EmptyMessage>
         ) : (
           category.items.map((item, index) => (
@@ -115,6 +210,32 @@ export default function CategorySection({ category, onItemClick }) {
               onClick={onItemClick}
             />
           ))
+        )}
+
+        {addingItem ? (
+          <AddItemRow>
+            <AddItemInput
+              ref={inputRef}
+              placeholder='Item name…'
+              value={newItemName}
+              onChange={(e) => setNewItemName(e.target.value)}
+              onKeyDown={(e) => {
+                if (e.key === 'Enter') handleSave();
+                if (e.key === 'Escape') cancelAdding();
+              }}
+            />
+            <AddItemSave onClick={handleSave} disabled={!newItemName.trim() || saving}>
+              Add
+            </AddItemSave>
+            <AddItemCancel onClick={cancelAdding}>✕</AddItemCancel>
+          </AddItemRow>
+        ) : (
+          <AddItemRow>
+            <AddItemButton type='button' onClick={startAdding}>
+              <FiPlus size={14} />
+              Add Item
+            </AddItemButton>
+          </AddItemRow>
         )}
       </ItemList>
     </Wrapper>
@@ -128,4 +249,5 @@ CategorySection.propTypes = {
     items: PropTypes.array.isRequired,
   }).isRequired,
   onItemClick: PropTypes.func,
+  onItemAdded: PropTypes.func,
 };
