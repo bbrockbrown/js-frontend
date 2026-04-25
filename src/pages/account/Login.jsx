@@ -1,4 +1,5 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
+import { FiArrowLeft } from 'react-icons/fi';
 import { Link, useNavigate } from 'react-router-dom';
 
 import GoogleButton from '@/common/components/atoms/GoogleButton';
@@ -9,14 +10,30 @@ import { RedSpan } from '@/common/components/form/styles';
 import { useUser } from '@/common/contexts/UserContext';
 import styled from 'styled-components';
 
-import { StyledPage } from './styles';
+import { BackButton, StyledPage } from './styles';
 
 const StyledLink = styled(Link)`
-  color: #007bff;
+  color: #2a4d8f;
   text-decoration: none;
   font-size: 0.9rem;
   margin-top: -10px;
   align-self: flex-end;
+
+  &:hover {
+    text-decoration: underline;
+  }
+`;
+
+const SignUpPrompt = styled.span`
+  font-size: 0.9rem;
+  color: #1a2b4a;
+  text-align: center;
+`;
+
+const SignUpLink = styled(Link)`
+  color: #2a4d8f;
+  text-decoration: none;
+  font-weight: 600;
 
   &:hover {
     text-decoration: underline;
@@ -37,7 +54,7 @@ function mapAuthCodeToMessage(authCode) {
 
 export default function Login() {
   const navigate = useNavigate();
-  const { login, googleAuth } = useUser();
+  const { login, googleAuth, role, isLoading: authLoading } = useUser();
   const [error, setError] = useState('');
   const [isLoading, setIsLoading] = useState(false);
 
@@ -45,6 +62,15 @@ export default function Login() {
     email: '',
     password: '',
   });
+
+  useEffect(() => {
+    if (authLoading) return;
+    if (role === 'owner') {
+      navigate('/inventory', { replace: true });
+    } else if (role === 'volunteer') {
+      navigate('/scan-in', { replace: true });
+    }
+  }, [authLoading, role, navigate]);
 
   const handleChange = (e) => {
     setFormState({ ...formState, [e.target.name]: e.target.value });
@@ -58,10 +84,9 @@ export default function Login() {
 
     try {
       await login(formState.email, formState.password);
-      navigate('/', { replace: true });
+      // Navigation handled by the role-watching useEffect above.
     } catch (error) {
       setError(mapAuthCodeToMessage(error.code));
-    } finally {
       setIsLoading(false);
     }
   };
@@ -76,13 +101,19 @@ export default function Login() {
 
   return (
     <StyledPage>
+      <BackButton
+        type='button'
+        onClick={() => navigate('/')}
+        aria-label='Back to landing'
+      >
+        <FiArrowLeft size={20} />
+      </BackButton>
       <Form onSubmit={handleSubmit}>
         <FormTitle>Log In</FormTitle>
         {error && <RedSpan>{error}</RedSpan>}
         <Input.Text
           title='Email'
           name='email'
-          placeholder='jsmith or j@example.com'
           value={formState.email}
           onChange={handleChange}
           required
@@ -103,6 +134,10 @@ export default function Login() {
           isLoading={isLoading}
           text='Sign in with Google'
         />
+        <SignUpPrompt>
+          Don&apos;t have an account?{' '}
+          <SignUpLink to='/signup'>Sign up</SignUpLink>
+        </SignUpPrompt>
       </Form>
     </StyledPage>
   );

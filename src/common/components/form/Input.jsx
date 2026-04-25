@@ -39,7 +39,6 @@ const InputPropTypes = {
 };
 
 function TextField(props) {
-  props.placeholder ??= 'Text Here';
   return <StyledInput type='text' {...props} />;
 }
 

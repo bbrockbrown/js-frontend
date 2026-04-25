@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { FiArrowLeft } from 'react-icons/fi';
+import { Link, useNavigate } from 'react-router-dom';
 
 import { Form, FormTitle } from '@/common/components/form/Form';
 import { Input } from '@/common/components/form/Input';
@@ -7,6 +8,8 @@ import SubmitButton from '@/common/components/form/SubmitButton';
 import { RedSpan } from '@/common/components/form/styles';
 import { useUser } from '@/common/contexts/UserContext';
 import styled from 'styled-components';
+
+import { BackButton, StyledPage } from './styles';
 
 const SuccessMessage = styled.div`
   color: #2e7d32;
@@ -17,7 +20,7 @@ const SuccessMessage = styled.div`
 `;
 
 const StyledLink = styled(Link)`
-  color: #007bff;
+  color: #2a4d8f;
   text-decoration: none;
   font-size: 0.9rem;
 
@@ -27,6 +30,7 @@ const StyledLink = styled(Link)`
 `;
 
 export default function RequestPasswordReset() {
+  const navigate = useNavigate();
   const [email, setEmail] = useState('');
   const [error, setError] = useState('');
   const [success, setSuccess] = useState(false);
@@ -49,33 +53,42 @@ export default function RequestPasswordReset() {
   };
 
   return (
-    <Form onSubmit={handleSubmit}>
-      <FormTitle>Reset Password</FormTitle>
-      {!success ? (
-        <>
-          {error && <RedSpan>{error}</RedSpan>}
-          <Input.Text
-            title='Email'
-            placeholder='j@example.com'
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            required
-          />
-          <SubmitButton onClick={() => {}} disabled={isLoading}>
-            {isLoading ? 'Sending...' : 'Send Reset Email'}
-          </SubmitButton>
-          <StyledLink to='/login'>Back to Login</StyledLink>
-        </>
-      ) : (
-        <>
-          <SuccessMessage>
-            Password reset instructions have been sent to your email. Please
-            check your inbox and follow the instructions. If you don&apos;t see
-            it within a few minutes, check your spam folder.
-          </SuccessMessage>
-          <StyledLink to='/login'>Back to Login</StyledLink>
-        </>
-      )}
-    </Form>
+    <StyledPage>
+      <BackButton
+        type='button'
+        onClick={() => navigate('/')}
+        aria-label='Back to landing'
+      >
+        <FiArrowLeft size={20} />
+      </BackButton>
+      <Form onSubmit={handleSubmit}>
+        <FormTitle>Reset Password</FormTitle>
+        {!success ? (
+          <>
+            {error && <RedSpan>{error}</RedSpan>}
+            <Input.Text
+              title='Email'
+              placeholder='j@example.com'
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              required
+            />
+            <SubmitButton onClick={() => {}} disabled={isLoading}>
+              {isLoading ? 'Sending...' : 'Send Reset Email'}
+            </SubmitButton>
+            <StyledLink to='/login'>Back to Login</StyledLink>
+          </>
+        ) : (
+          <>
+            <SuccessMessage>
+              Password reset instructions have been sent to your email. Please
+              check your inbox and follow the instructions. If you don&apos;t
+              see it within a few minutes, check your spam folder.
+            </SuccessMessage>
+            <StyledLink to='/login'>Back to Login</StyledLink>
+          </>
+        )}
+      </Form>
+    </StyledPage>
   );
 }

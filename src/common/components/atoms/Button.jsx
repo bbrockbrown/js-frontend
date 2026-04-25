@@ -13,6 +13,11 @@ const ButtonPrimary = styled(ButtonBase)`
   background-color: var(--primary-green);
   border-color: var(--primary-green);
   color: var(--white);
+
+  &:hover {
+    background-color: #1e3a6e;
+    border-color: #1e3a6e;
+  }
 `;
 
 const ButtonSecondary = styled(ButtonBase)`

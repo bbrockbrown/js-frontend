@@ -12,6 +12,7 @@ import PropTypes from 'prop-types';
 
 export const UserContext = React.createContext({
   user: null,
+  role: null,
   isLoading: false,
   logout: () => {},
   login: () => {},
@@ -28,11 +29,13 @@ const buildUrl = (endpoint) =>
 
 export function UserProvider({ children }) {
   const [user, setUser] = useState(null);
+  const [role, setRole] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, async (firebaseUser) => {
       if (firebaseUser) {
+        setRole(firebaseUser.isAnonymous ? 'volunteer' : 'owner');
         try {
           const idToken = await firebaseUser.getIdToken();
           const response = await fetch(buildUrl('/auth/profile'), {
@@ -49,6 +52,7 @@ export function UserProvider({ children }) {
           setUser(firebaseUser);
         }
       } else {
+        setRole(null);
         setUser(null);
       }
       setIsLoading(false);
@@ -107,6 +111,7 @@ export function UserProvider({ children }) {
 
   const contextValue = {
     user,
+    role,
     isLoading,
     login,
     logout,

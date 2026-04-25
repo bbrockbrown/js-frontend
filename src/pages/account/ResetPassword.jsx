@@ -9,6 +9,8 @@ import { auth } from '@/firebase-config';
 import { confirmPasswordReset } from 'firebase/auth';
 import styled from 'styled-components';
 
+import { StyledPage } from './styles';
+
 const PasswordStrength = styled.div`
   height: 5px;
   border-radius: 3px;
@@ -147,36 +149,38 @@ export default function ResetPassword() {
   const unmet = getUnmetRequirements(password);
 
   return (
-    <Form onSubmit={handleSubmit}>
-      <FormTitle>Set New Password</FormTitle>
-      {error && <RedSpan>{error}</RedSpan>}
-      <Input.Password
-        title='New Password'
-        value={password}
-        onChange={(e) => setPassword(e.target.value)}
-        required
-      />
-      {password && (
-        <>
-          <PasswordStrength $strength={checkPasswordStrength(password)} />
-          {unmet.length > 0 && (
-            <PasswordRequirements>
-              {unmet.map((req) => (
-                <li key={req}>{req}</li>
-              ))}
-            </PasswordRequirements>
-          )}
-        </>
-      )}
-      <Input.Password
-        title='Confirm Password'
-        value={confirmPassword}
-        onChange={(e) => setConfirmPassword(e.target.value)}
-        required
-      />
-      <SubmitButton onClick={() => {}} disabled={isLoading || !oobCode}>
-        {isLoading ? 'Updating...' : 'Update Password'}
-      </SubmitButton>
-    </Form>
+    <StyledPage>
+      <Form onSubmit={handleSubmit}>
+        <FormTitle>Set New Password</FormTitle>
+        {error && <RedSpan>{error}</RedSpan>}
+        <Input.Password
+          title='New Password'
+          value={password}
+          onChange={(e) => setPassword(e.target.value)}
+          required
+        />
+        {password && (
+          <>
+            <PasswordStrength $strength={checkPasswordStrength(password)} />
+            {unmet.length > 0 && (
+              <PasswordRequirements>
+                {unmet.map((req) => (
+                  <li key={req}>{req}</li>
+                ))}
+              </PasswordRequirements>
+            )}
+          </>
+        )}
+        <Input.Password
+          title='Confirm Password'
+          value={confirmPassword}
+          onChange={(e) => setConfirmPassword(e.target.value)}
+          required
+        />
+        <SubmitButton onClick={() => {}} disabled={isLoading || !oobCode}>
+          {isLoading ? 'Updating...' : 'Update Password'}
+        </SubmitButton>
+      </Form>
+    </StyledPage>
   );
 }
