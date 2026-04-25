@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useRef, useState } from 'react';
+import { useCallback, useMemo, useRef, useState } from 'react';
 import { FiSearch, FiUser } from 'react-icons/fi';
 
 import PantryLogo from '@/assets/icons/image-1.svg';
