@@ -1,6 +1,30 @@
 import { Button } from '@/common/components/atoms/Button';
 import styled from 'styled-components';
 
+export const BackButton = styled.button`
+  position: absolute;
+  top: 16px;
+  left: 16px;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background-color: #2a4d8f;
+  color: #ffffff;
+  border: none;
+  display: grid;
+  place-items: center;
+  cursor: pointer;
+
+  &:hover {
+    background-color: #1e3a6e;
+  }
+
+  svg {
+    color: #ffffff;
+    stroke: #ffffff;
+  }
+`;
+
 export const StyledForm = styled.form`
   display: flex;
   flex-direction: column;
@@ -12,10 +36,11 @@ export const StyledForm = styled.form`
 `;
 
 export const StyledPage = styled.div`
-  flex: 1 0 0;
+  min-height: 100vh;
   display: flex;
   justify-content: center;
   align-items: center;
+  position: relative;
 `;
 
 export const StyledButton = styled(Button.Primary)`

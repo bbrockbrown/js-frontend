@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { FiArrowLeft } from 'react-icons/fi';
+import { Link, useNavigate } from 'react-router-dom';
 
 import GoogleButton from '@/common/components/atoms/GoogleButton';
 import { Form, FormTitle } from '@/common/components/form/Form';
@@ -7,8 +8,25 @@ import { Input } from '@/common/components/form/Input';
 import SubmitButton from '@/common/components/form/SubmitButton';
 import { RedSpan } from '@/common/components/form/styles';
 import { useUser } from '@/common/contexts/UserContext';
+import styled from 'styled-components';
 
-import { StyledPage } from './styles';
+import { BackButton, StyledPage } from './styles';
+
+const LoginPrompt = styled.span`
+  font-size: 0.9rem;
+  color: #1a2b4a;
+  text-align: center;
+`;
+
+const LoginLink = styled(Link)`
+  color: #2a4d8f;
+  text-decoration: none;
+  font-weight: 600;
+
+  &:hover {
+    text-decoration: underline;
+  }
+`;
 
 export default function SignUp() {
   const navigate = useNavigate();
@@ -101,31 +119,34 @@ export default function SignUp() {
 
   return (
     <StyledPage>
+      <BackButton
+        type='button'
+        onClick={() => navigate('/')}
+        aria-label='Back to landing'
+      >
+        <FiArrowLeft size={20} />
+      </BackButton>
       <Form onSubmit={handleSubmit}>
         <FormTitle>Create an account</FormTitle>
         {error && <RedSpan>{error}</RedSpan>}
         <Input.Text
           title='First name'
-          placeholder='John'
           value={formState.firstname}
           onChange={handleChangeFirstname}
         />
         <Input.Text
           title='Last name'
-          placeholder='Smith'
           value={formState.lastname}
           onChange={handleChangeLastname}
         />
         <Input.Text
           title='Email'
-          placeholder='j@example.com'
           value={formState.email}
           onChange={handleChangeEmail}
           required
         />
         <Input.Text
           title='Username'
-          placeholder='johnsmith'
           value={formState.username}
           onChange={handleChangeUsername}
         />
@@ -143,6 +164,10 @@ export default function SignUp() {
           isLoading={isLoading}
           text='Sign up with Google'
         />
+        <LoginPrompt>
+          Already have an account?{' '}
+          <LoginLink to='/login'>Log in</LoginLink>
+        </LoginPrompt>
       </Form>
     </StyledPage>
   );

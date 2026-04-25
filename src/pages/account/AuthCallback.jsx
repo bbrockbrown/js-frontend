@@ -1,6 +1,7 @@
 import React, { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 
+import { useUser } from '@/common/contexts/UserContext';
 import { auth } from '@/firebase-config';
 import { getRedirectResult } from 'firebase/auth';
 import styled from 'styled-components';
@@ -18,19 +19,17 @@ const LoadingText = styled.p`
 
 export default function AuthCallback() {
   const navigate = useNavigate();
+  const { role, isLoading: authLoading } = useUser();
 
   useEffect(() => {
     const handleRedirectResult = async () => {
       try {
         // Handles the result of a signInWithRedirect() call (e.g. on mobile).
-        // If the user signed in via popup (desktop), result will be null and we
-        // redirect home immediately.
+        // If the user signed in via popup (desktop), result will be null and
+        // the role-watching effect below handles navigation.
         const result = await getRedirectResult(auth);
 
-        if (!result) {
-          navigate('/', { replace: true });
-          return;
-        }
+        if (!result) return;
 
         const idToken = await result.user.getIdToken();
 
@@ -48,8 +47,6 @@ export default function AuthCallback() {
           const error = await response.json();
           throw new Error(error.error || 'Authentication failed');
         }
-
-        navigate('/', { replace: true });
       } catch (error) {
         console.error('Auth callback error:', error);
         navigate('/login', {
@@ -61,6 +58,15 @@ export default function AuthCallback() {
 
     handleRedirectResult();
   }, [navigate]);
+
+  useEffect(() => {
+    if (authLoading) return;
+    if (role === 'owner') {
+      navigate('/inventory', { replace: true });
+    } else if (role === 'volunteer') {
+      navigate('/scan-in', { replace: true });
+    }
+  }, [authLoading, role, navigate]);
 
   return (
     <Container>
