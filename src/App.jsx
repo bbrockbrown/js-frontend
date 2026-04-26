@@ -11,8 +11,12 @@ import Login from '@/pages/account/Login';
 import RequestPasswordReset from '@/pages/account/RequestPasswordReset';
 import ResetPassword from '@/pages/account/ResetPassword';
 import SignUp from '@/pages/account/SignUp';
+import AuditLog from '@/pages/audit-log/AuditLog';
+import BrowseIdeas from '@/pages/browse/BrowseIdeas';
+import DataDashboard from '@/pages/dashboard/DataDashboard';
 import Home from '@/pages/home/Home';
 import NotFound from '@/pages/not-found/NotFound';
+import SubmissionForm from '@/pages/submit/SubmissionForm';
 
 import './App.css';
 
@@ -22,9 +26,18 @@ export default function App() {
       <BrowserRouter>
         <Routes>
           <Route path='/' element={<NavLayout />}>
+            {/* STANDARD ROUTES */}
+            <Route index element={<Home />} />
+            <Route path='browse' element={<BrowseIdeas />} />
+            <Route path='submit' element={<SubmissionForm />} />
+
+            {/* PROTECTED ROUTES */}
             <Route element={<PrivateRoute />}>
-              <Route index element={<Home />} />
+              <Route path='dashboard' element={<DataDashboard />} />
+              <Route path='audit-log' element={<AuditLog />} />
             </Route>
+
+            {/* PUBLIC ONLY ROUTES */}
             <Route element={<PublicOnlyRoute />}>
               <Route path='login' element={<Login />} />
               <Route path='signup' element={<SignUp />} />
@@ -33,6 +46,7 @@ export default function App() {
                 element={<RequestPasswordReset />}
               />
             </Route>
+
             <Route path='auth/callback' element={<AuthCallback />} />
             <Route path='auth/reset-password' element={<ResetPassword />} />
             <Route path='*' element={<NotFound />} />

@@ -1,20 +1,20 @@
 import { Outlet } from 'react-router-dom';
+import { useUser } from '@/common/contexts/UserContext';
 
-import styled from 'styled-components';
-
-import NavBar from '@/common/components/navigation/NavBar';
-
-const Layout = styled.div`
-  height: 100vh;
-  display: flex;
-  flex-direction: column;
-`;
+import SiteFooter from '@/common/components/layout/SiteFooter';
+import AdminHeader from '@/common/components/navigation/AdminHeader';
+import UserHeader from '@/common/components/navigation/UserHeader';
 
 export default function NavLayout() {
+  const { user } = useUser();
+
   return (
-    <Layout>
-      <NavBar />
-      <Outlet />
-    </Layout>
+    <>
+      {user ? <AdminHeader /> : <UserHeader />}
+      <main>
+        <Outlet />
+      </main>
+      <SiteFooter />
+    </>
   );
 }

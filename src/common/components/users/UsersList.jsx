@@ -1,8 +1,7 @@
 import { useEffect, useState } from 'react';
 
-import styled from 'styled-components';
-
 import { auth } from '@/firebase-config';
+import styled from 'styled-components';
 
 const UsersContainer = styled.div`
   margin-top: 2rem;
@@ -58,6 +57,10 @@ export default function UsersList() {
     const fetchUsers = async () => {
       try {
         const token = await auth.currentUser?.getIdToken();
+        if (!token) {
+          throw new Error('Admin login required.');
+        }
+
         const response = await fetch(
           `${import.meta.env.VITE_BACKEND_URL}/auth/users`,
           {

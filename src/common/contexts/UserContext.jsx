@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from 'react';
-import PropTypes from 'prop-types';
 
 import { auth, googleProvider } from '@/firebase-config';
 import {
@@ -9,6 +8,9 @@ import {
   signInWithPopup,
   signOut,
 } from 'firebase/auth';
+import PropTypes from 'prop-types';
+
+const dashboardDevBypass = import.meta.env.VITE_DASHBOARD_DEV_BYPASS === 'true';
 
 export const UserContext = React.createContext({
   user: null,
@@ -28,9 +30,26 @@ const buildUrl = (endpoint) =>
 
 export function UserProvider({ children }) {
   const [user, setUser] = useState(null);
-  const [isLoading, setIsLoading] = useState(true);
+  const [isLoading, setIsLoading] = useState(!dashboardDevBypass);
 
   useEffect(() => {
+    if (dashboardDevBypass) {
+      setUser({
+        uid: 'dev-admin-uid',
+        email: 'admin@local.dev',
+        role: 'admin',
+        username: 'admin',
+      });
+      setIsLoading(false);
+      return () => {};
+    }
+
+    if (!auth?.app) {
+      setUser(null);
+      setIsLoading(false);
+      return () => {};
+    }
+
     const unsubscribe = onAuthStateChanged(auth, async (firebaseUser) => {
       if (firebaseUser) {
         try {
@@ -58,6 +77,20 @@ export function UserProvider({ children }) {
   }, []);
 
   const login = async (email, password) => {
+    if (dashboardDevBypass) {
+      setUser({
+        uid: 'dev-admin-uid',
+        email: email || 'admin@local.dev',
+        role: 'admin',
+        username: 'admin',
+      });
+      return true;
+    }
+
+    if (!auth?.app) {
+      throw new Error('Firebase is not configured in frontend .env');
+    }
+
     try {
       await signInWithEmailAndPassword(auth, email, password);
       return true;
@@ -68,6 +101,16 @@ export function UserProvider({ children }) {
   };
 
   const logout = async () => {
+    if (dashboardDevBypass) {
+      setUser(null);
+      return true;
+    }
+
+    if (!auth?.app) {
+      setUser(null);
+      return true;
+    }
+
     try {
       await signOut(auth);
       return true;
@@ -79,6 +122,22 @@ export function UserProvider({ children }) {
 
   // Signs in with Google popup and syncs the user to the MySQL backend.
   const googleAuth = async () => {
+    if (dashboardDevBypass) {
+      setUser({
+        uid: 'dev-admin-uid',
+        email: 'admin@local.dev',
+        role: 'admin',
+        username: 'admin',
+      });
+      return true;
+    }
+
+    if (!auth?.app || !googleProvider) {
+      throw new Error(
+        'Firebase Google auth is not configured in frontend .env'
+      );
+    }
+
     try {
       const result = await signInWithPopup(auth, googleProvider);
       const idToken = await result.user.getIdToken();
@@ -96,6 +155,14 @@ export function UserProvider({ children }) {
   };
 
   const requestPasswordReset = async (email) => {
+    if (dashboardDevBypass) {
+      return !!email;
+    }
+
+    if (!auth?.app) {
+      throw new Error('Firebase is not configured in frontend .env');
+    }
+
     try {
       await sendPasswordResetEmail(auth, email);
       return true;
