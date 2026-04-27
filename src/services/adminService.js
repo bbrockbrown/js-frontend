@@ -12,7 +12,7 @@ async function authHeaders() {
 
 async function request(url, options = {}) {
   const headers = await authHeaders();
-  const res = await fetch(url, { ...options, headers, credentials: 'include' });
+  const res = await fetch(url, { ...options, headers });
 
   if (!res.ok) {
     const body = await res.json().catch(() => ({}));

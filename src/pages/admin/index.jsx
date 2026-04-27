@@ -55,22 +55,35 @@ const styles = {
 /* ── AdminPage ───────────────────────────────────────── */
 
 export default function AdminPage() {
-  const { users, loading, error, setRole } = useUsers();
+  const { users, loading, error, actionError, setRole, refetch } = useUsers();
 
   const requesting = users.filter((u) => u.role === 'pending');
   const activeUsers = users.filter((u) => u.role === 'member');
   const admins = users.filter((u) => u.role === 'admin');
 
+  const header = (
+    <div style={styles.topRow}>
+      <div>
+        <div style={styles.title}>User Management</div>
+        <div style={styles.subtitle}>Manage user access and permissions.</div>
+      </div>
+    </div>
+  );
+
   if (error) {
     return (
       <main style={styles.main}>
-        <div style={styles.topRow}>
-          <div>
-            <div style={styles.title}>User Management</div>
-            <div style={styles.subtitle}>Manage user access and permissions.</div>
-          </div>
+        {header}
+        <div style={styles.errorMsg}>
+          {error}{' '}
+          <button
+            type='button'
+            onClick={refetch}
+            style={{ marginLeft: '8px', cursor: 'pointer', textDecoration: 'underline', background: 'none', border: 'none', color: '#dc2626', fontSize: '14px' }}
+          >
+            Retry
+          </button>
         </div>
-        <div style={styles.errorMsg}>{error}</div>
       </main>
     );
   }
@@ -79,12 +92,8 @@ export default function AdminPage() {
 
   return (
     <main style={styles.main}>
-      <div style={styles.topRow}>
-        <div>
-          <div style={styles.title}>User Management</div>
-          <div style={styles.subtitle}>Manage user access and permissions.</div>
-        </div>
-      </div>
+      {header}
+      {actionError && <div style={styles.errorMsg}>{actionError}</div>}
 
       <Card style={{ padding: '24px' }}>
         <div style={styles.sectionHeader}>

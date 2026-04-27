@@ -6,6 +6,7 @@ export default function useUsers() {
   const [users, setUsers] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [actionError, setActionError] = useState(null);
 
   const fetchUsers = useCallback(async () => {
     setLoading(true);
@@ -24,16 +25,17 @@ export default function useUsers() {
     fetchUsers();
   }, [fetchUsers]);
 
-  const setRole = async (uid, role) => {
+  const setRole = useCallback(async (uid, role) => {
+    setActionError(null);
     try {
       const response = await adminService.setRole(uid, role);
       setUsers((prev) =>
         prev.map((u) => (u.firebaseUid === uid ? response.user : u)),
       );
     } catch (err) {
-      setError(err.message);
+      setActionError(err.message);
     }
-  };
+  }, []);
 
-  return { users, loading, error, setRole };
+  return { users, loading, error, actionError, setRole, refetch: fetchUsers };
 }
