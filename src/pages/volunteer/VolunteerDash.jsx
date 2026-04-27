@@ -1,15 +1,6 @@
-import NavBar from "../../common/components/navigation/NavBar";
 import WeekCal from "@/common/components/dashboard/WeekCal";
 import PageHeader from '@/common/components/atoms/PageHeader';
 import { BodyContainer } from '@/common/components/form/styles';
-import { useCalendarApp, ScheduleXCalendar } from '@schedule-x/react'
-import {
-  createViewDay,
-  createViewMonthAgenda,
-  createViewMonthGrid,
-  createViewWeek,
-} from '@schedule-x/calendar'
-import { createEventsServicePlugin } from '@schedule-x/events-service'
 import 'temporal-polyfill/global'
 import '@schedule-x/theme-default/dist/index.css'
 
