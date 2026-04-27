@@ -205,11 +205,18 @@ const SubmitButton = styled.button`
   }
 `;
 
-export default function ItemForm({ mode, initialBarcode, onSubmit, onCancel }) {
+export default function ItemForm({
+  mode,
+  initialBarcode,
+  initialName,
+  categoryOptions,
+  onSubmit,
+  onCancel,
+}) {
   const nameRef = useRef(null);
   const categoryRef = useRef(null);
-  const [name, setName] = useState('');
-  const [category, setCategory] = useState('');
+  const [name, setName] = useState(initialName || '');
+  const [manualCategory, setManualCategory] = useState('');
   const [month, setMonth] = useState('');
   const [year, setYear] = useState('');
   const [quantity, setQuantity] = useState(1);
@@ -217,8 +224,19 @@ export default function ItemForm({ mode, initialBarcode, onSubmit, onCancel }) {
   const [categoryFocused, setCategoryFocused] = useState(false);
   const [error, setError] = useState('');
 
-  const allItems = useMemo(() => getAllItemNames(), []);
-  const allCategories = useMemo(() => getAllCategoryNames(), []);
+  const allItems = useMemo(
+    () => getAllItemNames(categoryOptions),
+    [categoryOptions]
+  );
+  const allCategories = useMemo(
+    () => getAllCategoryNames(categoryOptions),
+    [categoryOptions]
+  );
+  const matchedCategory = useMemo(
+    () => findCategoryForItem(name, categoryOptions),
+    [categoryOptions, name]
+  );
+  const category = matchedCategory || manualCategory;
 
   const filteredItems = useMemo(() => {
     const q = name.trim().toLowerCase();
@@ -248,16 +266,12 @@ export default function ItemForm({ mode, initialBarcode, onSubmit, onCancel }) {
 
   const pickName = (value) => {
     setName(value);
-    const inferred = findCategoryForItem(value);
-    if (inferred && !category.trim()) {
-      setCategory(inferred);
-    }
     setNameFocused(false);
     setError('');
   };
 
   const pickCategory = (value) => {
-    setCategory(value);
+    setManualCategory(value);
     setCategoryFocused(false);
     setError('');
   };
@@ -277,17 +291,18 @@ export default function ItemForm({ mode, initialBarcode, onSubmit, onCancel }) {
   const decrement = () => setQuantity((q) => Math.max(1, q - 1));
   const increment = () => setQuantity((q) => q + 1);
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     const trimmedName = name.trim();
     const trimmedCategory = category.trim();
+    const isExistingItem = Boolean(matchedCategory);
     if (!trimmedName) {
       setError('Please enter an item name');
       focusName();
       return;
     }
-    if (!trimmedCategory) {
-      setError('Please enter a category');
+    if (!isExistingItem && !trimmedCategory) {
+      setError('Please choose a category for this new item');
       focusCategory();
       return;
     }
@@ -306,17 +321,22 @@ export default function ItemForm({ mode, initialBarcode, onSubmit, onCancel }) {
       return;
     }
 
-    onSubmit({
-      name: trimmedName,
-      category: trimmedCategory,
-      expirationMonth: m,
-      expirationYear: y,
-      quantity,
-      barcode: initialBarcode || null,
-    });
+    try {
+      await onSubmit({
+        name: trimmedName,
+        category: trimmedCategory || null,
+        expirationMonth: m,
+        expirationYear: y,
+        quantity,
+        barcode: initialBarcode || null,
+      });
+    } catch (submitError) {
+      setError(submitError.message || 'Failed to save item');
+    }
   };
 
   const nameLabel = mode === 'scanned' ? 'Recognized Item' : 'Item';
+  const categoryLocked = Boolean(matchedCategory);
 
   return (
     <>
@@ -377,25 +397,35 @@ export default function ItemForm({ mode, initialBarcode, onSubmit, onCancel }) {
         <Field>
           <FieldHeaderRow>
             <FieldLabel htmlFor='item-category'>Category</FieldLabel>
-            <EditButton type='button' onClick={focusCategory}>
-              Edit <FiEdit2 size={12} />
-            </EditButton>
+            {!categoryLocked && (
+              <EditButton type='button' onClick={focusCategory}>
+                Edit <FiEdit2 size={12} />
+              </EditButton>
+            )}
           </FieldHeaderRow>
           <TextInput
             id='item-category'
             ref={categoryRef}
             type='text'
             value={category}
+            readOnly={categoryLocked}
             onChange={(e) => {
-              setCategory(e.target.value);
+              setManualCategory(e.target.value);
               setError('');
             }}
-            onFocus={() => setCategoryFocused(true)}
+            onFocus={() => {
+              if (!categoryLocked) {
+                setCategoryFocused(true);
+              }
+            }}
             onBlur={() => setTimeout(() => setCategoryFocused(false), 150)}
             autoComplete='off'
-            placeholder='Pick or type a category'
+            placeholder={categoryLocked ? '' : 'Choose a category'}
           />
-          {categoryFocused && filteredCategories.length > 0 && (
+          {categoryLocked && (
+            <BarcodeNote>This item already exists in inventory.</BarcodeNote>
+          )}
+          {!categoryLocked && categoryFocused && filteredCategories.length > 0 && (
             <Dropdown role='listbox'>
               {filteredCategories.map((c) => (
                 <DropdownItem
@@ -468,10 +498,19 @@ export default function ItemForm({ mode, initialBarcode, onSubmit, onCancel }) {
 ItemForm.propTypes = {
   mode: PropTypes.oneOf(['scanned', 'manual']).isRequired,
   initialBarcode: PropTypes.string,
+  initialName: PropTypes.string,
+  categoryOptions: PropTypes.arrayOf(
+    PropTypes.shape({
+      id: PropTypes.number,
+      name: PropTypes.string,
+    })
+  ),
   onSubmit: PropTypes.func.isRequired,
   onCancel: PropTypes.func.isRequired,
 };
 
 ItemForm.defaultProps = {
   initialBarcode: null,
+  initialName: '',
+  categoryOptions: [],
 };
