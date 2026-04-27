@@ -3,7 +3,11 @@ import { FiArrowLeft } from 'react-icons/fi';
 
 import PantryLogo from '@/assets/icons/pantry-logo.svg';
 import { useUser } from '@/common/contexts/UserContext';
-import { addItem } from '@/common/utils/volunteerInventory';
+import {
+  addItem,
+  fetchCategories,
+  lookupByBarcode,
+} from '@/common/utils/volunteerInventory';
 import { BrowserMultiFormatReader } from '@zxing/browser';
 import styled from 'styled-components';
 
@@ -206,9 +210,32 @@ export default function ScanInPage() {
   const [view, setView] = useState('camera');
   const [formMode, setFormMode] = useState('scanned');
   const [pendingBarcode, setPendingBarcode] = useState(null);
+  const [pendingName, setPendingName] = useState('');
   const [confirmation, setConfirmation] = useState(null);
+  const [categories, setCategories] = useState([]);
   const [cameraStatus, setCameraStatus] = useState('starting');
   const [cameraError, setCameraError] = useState('');
+
+  useEffect(() => {
+    let cancelled = false;
+
+    const loadCategories = async () => {
+      try {
+        const result = await fetchCategories();
+        if (!cancelled) {
+          setCategories(result);
+        }
+      } catch (err) {
+        console.error('Category load error:', err);
+      }
+    };
+
+    loadCategories();
+
+    return () => {
+      cancelled = true;
+    };
+  }, []);
 
   useEffect(() => {
     if (view !== 'camera') return undefined;
@@ -216,6 +243,22 @@ export default function ScanInPage() {
     let cancelled = false;
     let localControls = null;
     const reader = new BrowserMultiFormatReader();
+    const videoElement = videoRef.current;
+
+    const handleBarcodeDetected = async (barcode) => {
+      setPendingBarcode(barcode);
+      setPendingName('');
+
+      try {
+        const lookupResult = await lookupByBarcode(barcode);
+        setPendingName(lookupResult?.productName || '');
+      } catch (err) {
+        console.error('Barcode lookup error:', err);
+      }
+
+      setFormMode('scanned');
+      setView('form');
+    };
 
     const start = async () => {
       setCameraStatus('starting');
@@ -223,14 +266,12 @@ export default function ScanInPage() {
       try {
         const controls = await reader.decodeFromConstraints(
           { video: { facingMode: { ideal: 'environment' } }, audio: false },
-          videoRef.current,
+          videoElement,
           (result, _err, ctrl) => {
             if (cancelled || !result) return;
             ctrl.stop();
             controlsRef.current = null;
-            setPendingBarcode(result.getText());
-            setFormMode('scanned');
-            setView('form');
+            void handleBarcodeDetected(result.getText());
           }
         );
         if (cancelled) {
@@ -289,7 +330,7 @@ export default function ScanInPage() {
 
       // Force-release the camera so the next mount can attach a fresh stream
       // without colliding with an in-flight play() promise.
-      const video = videoRef.current;
+      const video = videoElement;
       if (video) {
         try {
           video.pause();
@@ -318,6 +359,7 @@ export default function ScanInPage() {
 
   const goBackToScanner = () => {
     setPendingBarcode(null);
+    setPendingName('');
     setConfirmation(null);
     setView('camera');
   };
@@ -332,19 +374,26 @@ export default function ScanInPage() {
 
   const handleAddManually = () => {
     setPendingBarcode(null);
+    setPendingName('');
     setFormMode('manual');
     setView('form');
   };
 
-  const handleFormSubmit = (data) => {
-    addItem(data);
-    setConfirmation({ count: data.quantity, name: data.name });
-    setView('confirmation');
+  const handleFormSubmit = async (data) => {
+    try {
+      await addItem({ ...data, categories });
+      setConfirmation({ count: data.quantity, name: data.name });
+      setView('confirmation');
+    } catch (err) {
+      console.error('Save item error:', err);
+      throw err;
+    }
   };
 
   const handleConfirmationTap = () => {
     setConfirmation(null);
     setPendingBarcode(null);
+    setPendingName('');
     setView('camera');
   };
 
@@ -395,8 +444,11 @@ export default function ScanInPage() {
 
       {view === 'form' && (
         <ItemForm
+          key={`${formMode}:${pendingBarcode || 'manual'}:${pendingName}`}
           mode={formMode}
           initialBarcode={pendingBarcode}
+          initialName={pendingName}
+          categoryOptions={categories}
           onSubmit={handleFormSubmit}
           onCancel={goBackToScanner}
         />
