@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useRef, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { FiSearch, FiUser } from 'react-icons/fi';
 
 import PantryLogo from '@/assets/icons/image-1.svg';
@@ -7,13 +7,13 @@ import HistoryIcon from '@/assets/icons/tabler-icon-history.svg?react';
 import TableRowIcon from '@/assets/icons/tabler-icon-table-row.svg?react';
 import styled from 'styled-components';
 
+import { categoriesApi, itemsApi } from '../../services/api';
 import AddCategoryModal from './AddCategoryModal';
 import CategorySection from './CategorySection';
 import ItemDetailModal from './ItemDetailModal';
 import ProfileDropdown from './ProfileDropdown';
 import SortMenu from './SortMenu';
 import TabBar from './TabBar';
-import { MOCK_CATEGORIES } from './mockData';
 
 const PageWrapper = styled.div`
   height: 100vh;
@@ -198,6 +198,10 @@ const Content = styled.div`
 `;
 
 export default function InventoryPage() {
+  const [categories, setCategories] = useState([]);
+  const [items, setItems] = useState([]);
+  const [loading, setLoading] = useState(true);
+
   const [activeTab, setActiveTab] = useState('food');
   const [selectedCategoryId, setSelectedCategoryId] = useState(null);
   const [searchQuery, setSearchQuery] = useState('');
@@ -222,35 +226,61 @@ export default function InventoryPage() {
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, [showProfileDropdown]);
 
+  const loadData = useCallback(async () => {
+    try {
+      const [cats, its] = await Promise.all([
+        categoriesApi.getAll(),
+        itemsApi.getAll(),
+      ]);
+      setCategories(cats);
+      setItems(its);
+    } catch (err) {
+      console.error('Failed to load inventory data:', err);
+    } finally {
+      setLoading(false);
+    }
+  }, []);
+
+  useEffect(() => {
+    loadData();
+  }, [loadData]);
+
+  // Merge items into their categories
+  const categoriesWithItems = useMemo(
+    () =>
+      categories.map((cat) => ({
+        ...cat,
+        items: items.filter((item) => item.category_id === cat.id),
+      })),
+    [categories, items]
+  );
+
   const foodCategories = useMemo(
-    () => MOCK_CATEGORIES.filter((c) => c.parent_group === 'food'),
-    []
+    () => categoriesWithItems.filter((c) => c.parent_group === 'food'),
+    [categoriesWithItems]
   );
 
   const nonFoodCategories = useMemo(
-    () => MOCK_CATEGORIES.filter((c) => c.parent_group === 'non_food'),
-    []
+    () => categoriesWithItems.filter((c) => c.parent_group === 'non_food'),
+    [categoriesWithItems]
   );
 
   const filteredCategories = useMemo(() => {
-    let categories = MOCK_CATEGORIES;
+    let cats = categoriesWithItems;
 
-    // Tab filter
     if (activeTab === 'food') {
-      categories = categories.filter((c) => c.parent_group === 'food');
+      cats = cats.filter((c) => c.parent_group === 'food');
     } else if (activeTab === 'non_food') {
-      categories = categories.filter((c) => c.parent_group === 'non_food');
+      cats = cats.filter((c) => c.parent_group === 'non_food');
     }
 
-    // Specific category filter
     if (selectedCategoryId) {
-      categories = categories.filter((c) => c.id === selectedCategoryId);
+      cats = cats.filter((c) => c.id === selectedCategoryId);
     }
 
-    // Search filter
     if (searchQuery.trim()) {
       const query = searchQuery.toLowerCase();
-      categories = categories
+      cats = cats
         .map((cat) => ({
           ...cat,
           items: cat.items.filter((item) =>
@@ -260,8 +290,7 @@ export default function InventoryPage() {
         .filter((cat) => cat.items.length > 0);
     }
 
-    // Sort items within each category
-    categories = categories.map((cat) => {
+    cats = cats.map((cat) => {
       const sortedItems = [...cat.items];
       if (sortBy === 'alphabetical') {
         sortedItems.sort((a, b) => a.name.localeCompare(b.name));
@@ -273,17 +302,64 @@ export default function InventoryPage() {
       return { ...cat, items: sortedItems };
     });
 
-    return categories;
-  }, [activeTab, selectedCategoryId, searchQuery, sortBy]);
+    return cats;
+  }, [categoriesWithItems, activeTab, selectedCategoryId, searchQuery, sortBy]);
 
   const handleItemClick = (item) => {
     setSelectedItemId(item.id);
   };
 
-  const handleAddCategory = (data) => {
-    console.log('Add category:', data);
-    // TODO: API call when backend is ready
+  // Called when an item is added from CategorySection
+  const handleItemAdded = (newItem) => {
+    setItems((prev) => [...prev, newItem]);
   };
+
+  // Called when ItemDetailModal deletes an item
+  const handleItemDeleted = (deletedId) => {
+    setItems((prev) => prev.filter((item) => item.id !== deletedId));
+    setSelectedItemId(null);
+  };
+
+  // Refresh a single item's data in state (e.g. after threshold edit)
+  const handleItemUpdated = (updatedItem) => {
+    setItems((prev) =>
+      prev.map((item) => (item.id === updatedItem.id ? { ...item, ...updatedItem } : item))
+    );
+  };
+
+  // Refresh all items when modal closes (picks up batch qty changes)
+  const handleModalClose = useCallback(async () => {
+    setSelectedItemId(null);
+    try {
+      const updatedItems = await itemsApi.getAll();
+      setItems(updatedItems);
+    } catch (err) {
+      console.error('Failed to refresh items:', err);
+    }
+  }, []);
+
+  const handleAddCategory = async (data) => {
+    try {
+      const newCat = await categoriesApi.create({
+        name: data.name,
+        parent_group: data.parentGroup,
+      });
+      setCategories((prev) => [...prev, { ...newCat, items: [] }]);
+      setShowAddCategory(false);
+    } catch (err) {
+      console.error('Add category error:', err);
+    }
+  };
+
+  if (loading) {
+    return (
+      <PageWrapper>
+        <p style={{ color: '#9ca3af', textAlign: 'center', marginTop: 60 }}>
+          Loading inventory…
+        </p>
+      </PageWrapper>
+    );
+  }
 
   return (
     <PageWrapper>
@@ -351,6 +427,7 @@ export default function InventoryPage() {
               key={category.id}
               category={category}
               onItemClick={handleItemClick}
+              onItemAdded={handleItemAdded}
             />
           ))
         )}
@@ -368,13 +445,15 @@ export default function InventoryPage() {
       {selectedItemId && (
         <ItemDetailModal
           itemId={selectedItemId}
-          onClose={() => setSelectedItemId(null)}
+          onClose={handleModalClose}
+          onItemDeleted={handleItemDeleted}
+          onItemUpdated={handleItemUpdated}
         />
       )}
 
       {showAddCategory && (
         <AddCategoryModal
-          categories={MOCK_CATEGORIES}
+          categories={categoriesWithItems}
           onClose={() => setShowAddCategory(false)}
           onAdd={handleAddCategory}
         />
