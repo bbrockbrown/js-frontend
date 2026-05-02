@@ -76,15 +76,15 @@ export default function ChartsRow() {
     fetch(`${import.meta.env.VITE_BACKEND_URL}/dashboard/trend`, {
       credentials: 'include',
     })
-      .then((res) => res.json())
-      .then((data) => setTrendData(data))
+      .then((res) => (res.ok ? res.json() : []))
+      .then((data) => setTrendData(Array.isArray(data) ? data : []))
       .catch((err) => console.error('Failed to fetch trend data:', err));
 
     fetch(`${import.meta.env.VITE_BACKEND_URL}/dashboard/last6months`, {
       credentials: 'include',
     })
-      .then((res) => res.json())
-      .then((data) => setMonthlyData(data))
+      .then((res) => (res.ok ? res.json() : []))
+      .then((data) => setMonthlyData(Array.isArray(data) ? data : []))
       .catch((err) => console.error('Failed to fetch monthly data:', err));
   }, []);
 
