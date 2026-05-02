@@ -1,3 +1,12 @@
+/*
+  GoogleButton component
+  Used for displaying a button with a Google logo and a text.
+
+  Props:
+    - isLoading (boolean): Whether the button is loading.
+    - onClick (function): The function to call when the button is clicked.
+    - text (string): The text to display on the button.
+*/
 import React from 'react';
 
 import PropTypes from 'prop-types';

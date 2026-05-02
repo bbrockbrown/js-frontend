@@ -1,6 +1,7 @@
 import { BrowserRouter, Route, Routes } from 'react-router-dom';
 
 import {
+  AdminRoute,
   PrivateRoute,
   PublicOnlyRoute,
 } from '@/common/components/routes/ProtectedRoutes';
@@ -11,7 +12,13 @@ import Login from '@/pages/account/Login';
 import RequestPasswordReset from '@/pages/account/RequestPasswordReset';
 import ResetPassword from '@/pages/account/ResetPassword';
 import SignUp from '@/pages/account/SignUp';
+import AdminPage from '@/pages/admin';
+import DashboardPage from '@/pages/dashboard';
+import DonationsPage from '@/pages/donations';
+import DonorsPage from '@/pages/donors';
+import DonorDetailsPage from '@/pages/donors/Details';
 import Home from '@/pages/home/Home';
+import NoAccess from '@/pages/no-access/NoAccess';
 import NotFound from '@/pages/not-found/NotFound';
 
 import './App.css';
@@ -24,7 +31,15 @@ export default function App() {
           <Route path='/' element={<NavLayout />}>
             <Route element={<PrivateRoute />}>
               <Route index element={<Home />} />
+              <Route path='dashboard' element={<DashboardPage />} />
+              <Route path='donations' element={<DonationsPage />} />
+              <Route path='donors' element={<DonorsPage />} />
+              <Route path='donors/:id' element={<DonorDetailsPage />} />
+              <Route element={<AdminRoute />}>
+                <Route path='admin' element={<AdminPage />} />
+              </Route>
             </Route>
+            <Route path='no-access' element={<NoAccess />} />
             <Route element={<PublicOnlyRoute />}>
               <Route path='login' element={<Login />} />
               <Route path='signup' element={<SignUp />} />

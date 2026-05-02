@@ -1,8 +1,7 @@
 import { useEffect, useState } from 'react';
 
-import styled from 'styled-components';
-
 import { auth } from '@/firebase-config';
+import styled from 'styled-components';
 
 const UsersContainer = styled.div`
   margin-top: 2rem;
@@ -100,8 +99,7 @@ export default function UsersList() {
           <UserInfo>
             <div>
               <UserName>
-                {user.firstname} {user.lastname} (
-                {user.username || 'No username'})
+                {user.firstname} {user.lastname}
               </UserName>
               <UserEmail>{user.email}</UserEmail>
             </div>
