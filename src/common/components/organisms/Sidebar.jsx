@@ -11,13 +11,14 @@ import { useNavigate } from 'react-router-dom';
 import NavItem from '@/common/components/atoms/NavItem';
 import UserProfile from '@/common/components/molecules/UserProfile';
 import { useUser } from '@/common/contexts/UserContext';
-import { DollarSign, LayoutDashboard, Users } from 'lucide-react';
+import { DollarSign, LayoutDashboard, ShieldCheck, Users } from 'lucide-react';
 import PropTypes from 'prop-types';
 
 const NAV_ITEMS = [
   { label: 'Dashboard', icon: LayoutDashboard, id: 'dashboard' },
   { label: 'Donations', icon: DollarSign, id: 'donations' },
   { label: 'Donors', icon: Users, id: 'donors' },
+  { label: 'Admin', icon: ShieldCheck, id: 'admin' },
 ];
 
 const styles = {
@@ -53,20 +54,18 @@ function getInitials(user) {
   if (user?.firstname && user?.lastname) {
     return `${user.firstname[0]}${user.lastname[0]}`.toUpperCase();
   }
-  if (user?.username) return user.username.slice(0, 2).toUpperCase();
   if (user?.email) return user.email.slice(0, 2).toUpperCase();
   return '?';
 }
 
 function getDisplayName(user) {
-  if (user?.firstname && user?.lastname)
-    return `${user.firstname} ${user.lastname}`;
-  if (user?.username) return user.username;
+  if (user?.firstname && user?.lastname) return `${user.firstname} ${user.lastname}`;
   return user?.email || '';
 }
 
 export default function Sidebar({ activePage, onNavigate }) {
   const { user, logout } = useUser();
+  const navItems = NAV_ITEMS.filter(({ id }) => id !== 'admin' || user?.role === 'admin');
   const navigate = useNavigate();
 
   const handleLogout = async () => {
@@ -80,7 +79,7 @@ export default function Sidebar({ activePage, onNavigate }) {
         <span style={styles.logoText}>Donor Management</span>
       </div>
       <nav style={styles.nav}>
-        {NAV_ITEMS.map(({ label, icon, id }) => (
+        {navItems.map(({ label, icon, id }) => (
           <NavItem
             key={id}
             label={label}
