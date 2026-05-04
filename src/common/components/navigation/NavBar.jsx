@@ -109,7 +109,7 @@ export default function NavBar() {
               $isActive={location.pathname === '/ImageGallery'}
               onClick={() => navigate('/ImageGallery')}
             >
-              ImageGallery
+              Image Gallery
             </NavLink>
           </>
         )}
