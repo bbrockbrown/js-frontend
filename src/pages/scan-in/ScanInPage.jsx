@@ -352,6 +352,7 @@ export default function ScanInPage() {
     const timer = setTimeout(() => {
       setConfirmation(null);
       setPendingBarcode(null);
+      setPendingName('');
       setView('camera');
     }, 1500);
     return () => clearTimeout(timer);
