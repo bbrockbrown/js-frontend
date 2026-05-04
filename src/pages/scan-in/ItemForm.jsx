@@ -337,6 +337,7 @@ export default function ItemForm({
 
   const nameLabel = mode === 'scanned' ? 'Recognized Item' : 'Item';
   const categoryLocked = Boolean(matchedCategory);
+  const nameLocked = Boolean(matchedCategory);
 
   return (
     <>
@@ -356,7 +357,7 @@ export default function ItemForm({
         <Field>
           <FieldHeaderRow>
             <FieldLabel htmlFor='item-name'>{nameLabel}</FieldLabel>
-            {mode === 'scanned' && (
+            {mode === 'scanned' && !nameLocked && (
               <EditButton type='button' onClick={focusName}>
                 Edit <FiEdit2 size={12} />
               </EditButton>
@@ -367,6 +368,7 @@ export default function ItemForm({
             ref={nameRef}
             type='text'
             value={name}
+            readOnly={nameLocked}
             onChange={(e) => {
               setName(e.target.value);
               setError('');
@@ -374,8 +376,14 @@ export default function ItemForm({
             onFocus={() => setNameFocused(true)}
             onBlur={() => setTimeout(() => setNameFocused(false), 150)}
             autoComplete='off'
-            placeholder={mode === 'manual' ? 'Type item name' : ''}
+            placeholder={mode === 'manual' ? 'Type item name' : mode === 'scanned' && !name ? 'Enter item name' : ''}
           />
+          {nameLocked && (
+            <BarcodeNote>This item already exists in inventory.</BarcodeNote>
+          )}
+          {mode === 'scanned' && !name && (
+            <BarcodeNote>Item not recognized. Please manually enter the item name.</BarcodeNote>
+          )}
           {nameFocused && filteredItems.length > 0 && (
             <Dropdown role='listbox'>
               {filteredItems.map((item) => (
