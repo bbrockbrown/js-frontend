@@ -17,6 +17,7 @@ import Contacts from '@/pages/contacts/Contacts';
 import NotFound from '@/pages/not-found/NotFound';
 import Dashboard from './pages/dashboard/Dashboard';
 import DraftTemplates from './pages/Templates/DraftTemplates';
+import ImageGallery from './pages/ImageGallery/ImageGallery';
 
 import './App.css';
 
@@ -32,6 +33,7 @@ export default function App() {
               <Route path='contacts' element={<Contacts />} />
               <Route path='dashboard' element={<Dashboard />} />
               <Route path='templates' element={<DraftTemplates/>} />
+              <Route path='ImageGallery' element={<ImageGallery/>} />
             </Route>
             <Route element={<PublicOnlyRoute />}>
               <Route path='login' element={<Login />} />

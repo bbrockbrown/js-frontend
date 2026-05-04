@@ -105,6 +105,12 @@ export default function NavBar() {
             >
               Templates
             </NavLink>
+            <NavLink
+              $isActive={location.pathname === '/ImageGallery'}
+              onClick={() => navigate('/ImageGallery')}
+            >
+              Image Gallery
+            </NavLink>
           </>
         )}
       </LeftAligned>
