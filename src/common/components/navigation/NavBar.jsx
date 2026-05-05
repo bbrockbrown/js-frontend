@@ -1,45 +1,88 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-
 import styled from 'styled-components';
-
-import { Button } from '@/common/components/atoms/Button';
 import { useUser } from '@/common/contexts/UserContext';
-
 import LogoutModal from './LogoutModal';
+
+// --- Styled Components ---
 
 const StyledNav = styled.nav`
   display: flex;
-  gap: 10px;
-  padding: 10px 20px;
-  font-size: 20px;
+  justify-content: space-between;
+  align-items: center;
+  padding: 24px 40px;
+  background-color: #E2F3FF; 
+  color: white;
+  /* Matching the clean, modern font-family from the first image */
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
 `;
 
-const LeftAligned = styled.div`
-  flex: 1;
+const LeftGroup = styled.div`
   display: flex;
-  gap: 10px;
+  align-items: center; /* Vertically centers Logo and About */
+  gap: 35px;
 `;
 
-const LogoPlaceholder = styled(Button.Invisible)`
-  padding: 0;
-  font-size: 1.7rem;
-  font-weight: bold;
-  font-family: monospace;
+const RightGroup = styled.div`
+  display: flex;
+  align-items: center; /* Vertically centers Sign In and Get Started button */
+  gap: 25px; /* Increased gap slightly for better breathing room */
 `;
+
+const LogoText = styled.h1`
+  font-size: 32px;
+  font-weight: 400;
+  margin: 0;
+  line-height: 1; /* Prevents extra spacing above/below the letters */
+  cursor: pointer;
+  color: #000000;
+  letter-spacing: -0.5px;
+`;
+
+const NavLink = styled.span`
+  font-size: 15px;
+  color: #000000;
+  opacity: 0.85;
+  cursor: pointer;
+  /* margin-top: 4px;  <-- REMOVED THIS */
+  line-height: 1; /* Keeps text height consistent */
+  
+  &:hover {
+    opacity: 1;
+  }
+`;
+
+const BaseButton = styled.button`
+  border: none;
+  padding: 10px 24px;
+  border-radius: 10px;
+  font-weight: 500;
+  font-size: 15px;
+  cursor: pointer;
+  color: #ffffff;
+  font-family: inherit;
+  display: flex;         /* Added to help center text inside button */
+  align-items: center;   /* Added to help center text inside button */
+  transition: transform 0.1s ease;
+
+  &:active {
+    transform: scale(0.98);
+  }
+`;
+
+const GetStartedButton = styled(BaseButton)`
+  background-color: #000000; 
+`;
+
+// --- Component ---
 
 export default function NavBar() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const navigate = useNavigate();
   const { user, logout } = useUser();
 
-  const handleLogoutClick = () => {
-    setIsModalOpen(true);
-  };
-
-  const handleModalClose = () => {
-    setIsModalOpen(false);
-  };
+  const handleLogoutClick = () => setIsModalOpen(true);
+  const handleModalClose = () => setIsModalOpen(false);
 
   const handleLogoutConfirm = async () => {
     try {
@@ -53,21 +96,31 @@ export default function NavBar() {
 
   return (
     <StyledNav>
-      <LeftAligned>
-        <LogoPlaceholder onClick={() => navigate('/')}>[LOGO]</LogoPlaceholder>
-      </LeftAligned>
-      {user ? (
-        <Button.Secondary onClick={handleLogoutClick}>Log Out</Button.Secondary>
-      ) : (
-        <>
-          <Button.Primary onClick={() => navigate('/signup')}>
-            Sign Up
-          </Button.Primary>
-          <Button.Secondary onClick={() => navigate('/login')}>
-            Login
-          </Button.Secondary>
-        </>
-      )}
+      <LeftGroup>
+        <LogoText onClick={() => navigate('/')}>
+          Learner Tracking System
+        </LogoText>
+        <NavLink onClick={() => navigate('/about')}>About</NavLink>
+        <NavLink onClick={() => navigate('/dashboard')}>Dashboard</NavLink>
+        <NavLink onClick={() => navigate('/database')}>Database</NavLink>
+        <NavLink onClick={() => navigate('/communications')}>Communications</NavLink>
+      </LeftGroup>
+
+      <RightGroup>
+        {user ? (
+          <GetStartedButton onClick={handleLogoutClick}>Log Out</GetStartedButton>
+        ) : (
+          <>
+            <NavLink onClick={() => navigate('/login')}>
+              Sign In
+            </NavLink>
+            <GetStartedButton onClick={() => navigate('/signup')}>
+              Get Started
+            </GetStartedButton>
+          </>
+        )}
+      </RightGroup>
+
       <LogoutModal
         isOpen={isModalOpen}
         onClose={handleModalClose}

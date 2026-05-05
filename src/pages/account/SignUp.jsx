@@ -9,7 +9,7 @@ import SubmitButton from '@/common/components/form/SubmitButton';
 import { useUser } from '@/common/contexts/UserContext';
 import { RedSpan } from '@/common/components/form/styles';
 
-import { StyledPage } from './styles';
+import { StyledPage, StyledForm } from './styles';
 
 export default function SignUp() {
   const navigate = useNavigate();
@@ -51,10 +51,15 @@ export default function SignUp() {
   };
 
   const handleGoogleSignup = async () => {
+    setIsLoading(true);
+    setError('');
     try {
       await googleAuth();
+      navigate('/', { replace: true });
     } catch (error) {
       setError(error.message);
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -102,36 +107,43 @@ export default function SignUp() {
 
   return (
     <StyledPage>
-      <Form onSubmit={handleSubmit}>
-        <FormTitle>Create an account</FormTitle>
+      <StyledForm onSubmit={handleSubmit}>
+        <FormTitle>Get Started</FormTitle>
         {error && <RedSpan>{error}</RedSpan>}
+        <GoogleButton
+          onClick={handleGoogleSignup}
+          isLoading={isLoading}
+          text='Sign up with Google'
+        />
         <Input.Text
-          title='First name'
-          placeholder='John'
+          name='username'
+          placeholder='Username'
+          value={formState.username}
+          onChange={handleChangeUsername}
+          required
+        />
+        <Input.Text
+          name='firstname'
+          placeholder='First name'
           value={formState.firstname}
           onChange={handleChangeFirstname}
         />
         <Input.Text
-          title='Last name'
-          placeholder='Smith'
+          name='lastname'
+          placeholder='Last name'
           value={formState.lastname}
           onChange={handleChangeLastname}
         />
         <Input.Text
-          title='Email'
-          placeholder='j@example.com'
+          name='email'
+          placeholder='Email'
           value={formState.email}
           onChange={handleChangeEmail}
           required
         />
-        <Input.Text
-          title='Username'
-          placeholder='johnsmith'
-          value={formState.username}
-          onChange={handleChangeUsername}
-        />
         <Input.Password
-          title='Password'
+          name='password'
+          placeholder='Password'
           value={formState.password}
           onChange={handleChangePassword}
           required
@@ -139,12 +151,8 @@ export default function SignUp() {
         <SubmitButton onClick={() => {}} disabled={isLoading}>
           {isLoading ? 'Creating account...' : 'Sign Up'}
         </SubmitButton>
-        <GoogleButton
-          onClick={handleGoogleSignup}
-          isLoading={isLoading}
-          text='Sign up with Google'
-        />
-      </Form>
+        
+      </StyledForm>
     </StyledPage>
   );
 }
