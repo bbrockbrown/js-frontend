@@ -1,11 +1,10 @@
 import React, { useMemo, useState } from 'react';
+import './oakton-intake.css';
 
-import medicalStudent from '@/assets/oakton-intake/medical-student.png';
 import oaktonLogo from '@/assets/oakton-intake/logo.png';
 import studentSmiling from '@/assets/oakton-intake/student-smiling.png';
+import medicalStudent from '@/assets/oakton-intake/medical-student.png';
 import studentWorking from '@/assets/oakton-intake/student-working.png';
-
-import './oakton-intake.css';
 
 function calculateAge(dateOfBirthISO) {
   if (!dateOfBirthISO) return null;
